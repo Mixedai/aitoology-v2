@@ -1,0 +1,346 @@
+:root {
+  --font-size: 14px;
+  --background: #ffffff;
+  --foreground: #1A1A1A;
+  --card: #ffffff;
+  --card-foreground: #1A1A1A;
+  --popover: #ffffff;
+  --popover-foreground: #1A1A1A;
+  --primary: #FF6B35;
+  --primary-foreground: #ffffff;
+  --secondary: #4A5C7A;
+  --secondary-foreground: #ffffff;
+  --muted: #E5E1DB;
+  --muted-foreground: #4A5C7A;
+  --accent: #E5E1DB;
+  --accent-foreground: #1A1A1A;
+  --neutral-light: #E9E3DF;
+  --neutral-light-foreground: #1A1A1A;
+  --destructive: #EF4444;
+  --destructive-foreground: #ffffff;
+  --success: #10B981;
+  --success-foreground: #ffffff;
+  --warning: #EAB308;
+  --warning-foreground: #1A1A1A;
+  --border: rgba(74, 92, 122, 0.2);
+  --input: #ffffff;
+  --input-background: #ffffff;
+  --switch-background: #E5E1DB;
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --ring: #FF6B35;
+  --chart-1: #FF6B35;
+  --chart-2: #4A5C7A;
+  --chart-3: #E5E1DB;
+  --chart-4: #1A1A1A;
+  --chart-5: #10B981;
+  --radius: 0.5rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1A1A1A;
+  --sidebar-primary: #FF6B35;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #E5E1DB;
+  --sidebar-accent-foreground: #1A1A1A;
+  --sidebar-border: rgba(74, 92, 122, 0.2);
+  --sidebar-ring: #FF6B35;
+  
+  /* Navbar color - professional navy blue */
+  --navbar-bg: #465C88;
+  --navbar-foreground: #ffffff;
+  
+  /* Typography Scale - 8-point grid based */
+  --text-xs: 0.75rem;    /* 12px */
+  --text-sm: 0.875rem;   /* 14px */
+  --text-base: 1rem;     /* 16px */
+  --text-lg: 1.125rem;   /* 18px */
+  --text-xl: 1.25rem;    /* 20px */
+  --text-2xl: 1.5rem;    /* 24px */
+  --text-3xl: 1.875rem;  /* 30px */
+  --text-4xl: 2.25rem;   /* 36px */
+  
+  /* Spacing Scale - 8-point grid system */
+  --spacing-1: 0.25rem;  /* 4px */
+  --spacing-2: 0.5rem;   /* 8px */
+  --spacing-3: 0.75rem;  /* 12px */
+  --spacing-4: 1rem;     /* 16px */
+  --spacing-5: 1.25rem;  /* 20px */
+  --spacing-6: 1.5rem;   /* 24px */
+  --spacing-8: 2rem;     /* 32px */
+  --spacing-10: 2.5rem;  /* 40px */
+  --spacing-12: 3rem;    /* 48px */
+  --spacing-16: 4rem;    /* 64px */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-neutral-light: var(--neutral-light);
+  --color-neutral-light-foreground: var(--neutral-light-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-switch-background: var(--switch-background);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-navbar-bg: var(--navbar-bg);
+  --color-navbar-foreground: var(--navbar-foreground);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+  
+  /* Accessibility: Focus-visible styles for interactive elements */
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible,
+  a:focus-visible,
+  [tabindex]:focus-visible,
+  [role="button"]:focus-visible,
+  [role="menuitem"]:focus-visible,
+  [role="tab"]:focus-visible,
+  [role="checkbox"]:focus-visible,
+  [role="radio"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  
+  /* High contrast focus for better visibility */
+  @media (prefers-contrast: high) {
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible,
+    a:focus-visible,
+    [tabindex]:focus-visible,
+    [role="button"]:focus-visible,
+    [role="menuitem"]:focus-visible,
+    [role="tab"]:focus-visible,
+    [role="checkbox"]:focus-visible,
+    [role="radio"]:focus-visible {
+      outline: 3px solid var(--ring);
+      outline-offset: 2px;
+    }
+  }
+  
+  /* Remove default focus outline to use our custom styles */
+  button:focus,
+  input:focus,
+  textarea:focus,
+  select:focus,
+  a:focus,
+  [tabindex]:focus {
+    outline: none;
+  }
+  
+  /* Ensure focus is visible when not using focus-visible */
+  button:focus:not(:focus-visible),
+  input:focus:not(:focus-visible),
+  textarea:focus:not(:focus-visible),
+  select:focus:not(:focus-visible),
+  a:focus:not(:focus-visible),
+  [tabindex]:focus:not(:focus-visible) {
+    outline: none;
+  }
+  
+  /* Skip links for screen readers */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+  
+  .sr-only:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: 0.5rem 1rem;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    z-index: 9999;
+  }
+  
+  /* Motion preferences handling */
+  @media (prefers-reduced-motion: reduce) {
+    /* Completely disable complex animations for users who request reduced motion */
+    .motion-complex,
+    .floating-orb,
+    [data-motion-component] {
+      animation: none !important;
+      transition: none !important;
+    }
+    
+    /* Keep only essential transitions for usability */
+    button, a, input, [role="button"] {
+      transition: background-color 0.2s ease, color 0.2s ease !important;
+    }
+    
+    /* Hide decorative background animations */
+    .motion-reduce-hide {
+      display: none !important;
+    }
+  }
+  
+  /* Default state - optimized animations */
+  @media (prefers-reduced-motion: no-preference) {
+    /* Ensure smooth performance for animations */
+    .motion-optimized {
+      will-change: transform;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
+  }
+}
+
+/**
+ * Base typography. This is not applied to elements which have an ancestor with a Tailwind text class.
+ */
+@layer base {
+  :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) {
+    h1 {
+      font-size: var(--text-2xl);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    h2 {
+      font-size: var(--text-xl);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    h3 {
+      font-size: var(--text-lg);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    h4 {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    p {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.5;
+    }
+
+    label {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    button {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    input {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.5;
+    }
+  }
+}
+
+html {
+  font-size: var(--font-size);
+}
+
+/* Performance-focused animation classes */
+.motion-safe-animation {
+  animation-play-state: running !important;
+  will-change: transform, opacity;
+}
+
+/* Lightweight motion components */
+[data-motion-component] {
+  will-change: transform, opacity;
+}
+
+/* Simplified performance optimizations */
+.motion-optimized {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Lightweight background animations */
+.animated-background {
+  animation-fill-mode: both;
+  animation-play-state: running;
+}
+
+/* Simplified floating elements */
+.floating-orb {
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* Scroll-based optimizations */
+.scroll-optimized {
+  will-change: transform;
+  contain: layout style paint;
+}
+
+/* Intersection observer optimizations */
+.intersection-optimized {
+  contain: layout style paint;
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
