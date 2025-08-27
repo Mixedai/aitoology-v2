@@ -580,7 +580,7 @@ export function ExploreFrame({ onNavigate, className = "" }: ExploreFrameProps) 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalTab, setAuthModalTab] = useState<'login' | 'register'>('login');
   
-  // Map database categories to UI format with icons - MOVED BEFORE useEffect
+  // Map database categories to UI format with icons - Using useMemo to prevent re-computation
   const categoryIcons: { [key: string]: any } = {
     'Chatbot': Brain,
     'Design': Sparkles,
@@ -591,12 +591,14 @@ export function ExploreFrame({ onNavigate, className = "" }: ExploreFrameProps) 
     'Writing': FileText
   };
   
-  const categories = dbCategories.map(cat => ({
-    id: cat.slug,
-    name: cat.name,
-    icon: categoryIcons[cat.name] || Boxes,
-    count: cat.tool_count || 0
-  }));
+  const categories = React.useMemo(() => {
+    return dbCategories.map(cat => ({
+      id: cat.slug,
+      name: cat.name,
+      icon: categoryIcons[cat.name] || Boxes,
+      count: cat.tool_count || 0
+    }));
+  }, [dbCategories]);
 
   // Handle search and category changes
   useEffect(() => {
@@ -637,31 +639,35 @@ export function ExploreFrame({ onNavigate, className = "" }: ExploreFrameProps) 
     { id: 'automation', name: 'Automation', icon: Bot, count: 12 }
   ];
 
-  // Map Supabase tools to UI format
-  const formattedTools = tools.map(tool => ({
-    id: tool.slug || tool.id,
-    name: tool.name,
-    description: tool.description,
-    category: tool.category,
-    rating: tool.rating ? tool.rating.toString() : '4.5',
-    users: '10M+', // This could be added to database
-    pricing: tool.pricing,
-    isPremium: tool.pricing !== 'Free',
-    gradient: getToolGradient(tool),
-    icon: categoryIcons[tool.category] || Brain,
-    features: tool.features || [],
-    tags: tool.tags || [],
-    website_url: tool.website_url,
-    logo_emoji: tool.logo_emoji
-  }));
+  // Map Supabase tools to UI format - Using useMemo for optimization
+  const formattedTools = React.useMemo(() => {
+    return tools.map(tool => ({
+      id: tool.slug || tool.id,
+      name: tool.name,
+      description: tool.description,
+      category: tool.category,
+      rating: tool.rating ? tool.rating.toString() : '4.5',
+      users: '10M+', // This could be added to database
+      pricing: tool.pricing,
+      isPremium: tool.pricing !== 'Free',
+      gradient: getToolGradient(tool),
+      icon: categoryIcons[tool.category] || Brain,
+      features: tool.features || [],
+      tags: tool.tags || [],
+      website_url: tool.website_url,
+      logo_emoji: tool.logo_emoji
+    }));
+  }, [tools]);
 
-  const filteredTools = formattedTools.filter(tool => {
-    const matchesSearch = tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         tool.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || 
-                           tool.category.toLowerCase() === selectedCategory.toLowerCase();
-    return matchesSearch && matchesCategory;
-  });
+  const filteredTools = React.useMemo(() => {
+    return formattedTools.filter(tool => {
+      const matchesSearch = tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           tool.description.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory = selectedCategory === 'all' || 
+                             tool.category.toLowerCase() === selectedCategory.toLowerCase();
+      return matchesSearch && matchesCategory;
+    });
+  }, [formattedTools, searchQuery, selectedCategory]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
