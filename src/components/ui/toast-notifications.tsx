@@ -142,27 +142,9 @@ export const toastNotifications = {
       }
     }),
 
-  subscriptionAdded: (toolName: string) =>
-    showToast('success', 'Subscription tracked', {
-      description: `${toolName} subscription added to your wallet`,
-      action: {
-        label: 'View Wallet',
-        onClick: () => console.log('Navigate to wallet')
-      }
-    }),
-
   profileUpdated: () =>
     showToast('success', 'Profile updated', {
       description: 'Your changes have been saved successfully'
-    }),
-
-  workflowCreated: (workflowName: string) =>
-    showToast('success', 'Workflow created', {
-      description: `${workflowName} is ready to use`,
-      action: {
-        label: 'Run Workflow',
-        onClick: () => console.log('Run workflow')
-      }
     }),
 
   tutorialCompleted: (tutorialName: string) => {
@@ -230,15 +212,6 @@ export const toastNotifications = {
       action: {
         label: 'Upgrade',
         onClick: () => console.log('Navigate to billing')
-      }
-    }),
-
-  unsavedChanges: () =>
-    showToast('warning', 'Unsaved changes', {
-      description: 'Your changes haven\'t been saved yet',
-      action: {
-        label: 'Save Now',
-        onClick: () => console.log('Save changes')
       }
     }),
 

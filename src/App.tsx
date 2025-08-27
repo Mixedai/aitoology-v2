@@ -750,10 +750,6 @@ function AppContent() {
         navigationLogger.logNavigation(from, 'tutorials-frame');
         handleNavigation('tutorials-frame');
       },
-      'tool-combinations-frame': (from) => {
-        navigationLogger.logNavigation(from, 'tool-combinations-frame');
-        handleNavigation('tool-combinations-frame');
-      },
       'news': (from) => {
         navigationLogger.logNavigation(from, 'news');
         handleNavigation('news');
