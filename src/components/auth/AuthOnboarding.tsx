@@ -13,6 +13,8 @@ import {
   Loader
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 interface AuthOnboardingProps {
   onNavigate?: (fromScreen: string, toScreen: string, params?: any) => void;
@@ -20,6 +22,7 @@ interface AuthOnboardingProps {
 }
 
 export function AuthOnboarding({ onNavigate, currentScreen = 'auth' }: AuthOnboardingProps) {
+  const { signIn, signUp, signInWithGoogle, signInWithGithub } = useAuth();
   const [activeTab, setActiveTab] = useState("signin");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -58,30 +61,97 @@ export function AuthOnboarding({ onNavigate, currentScreen = 'auth' }: AuthOnboa
     setIsLoading(true);
     setLoadingAction('email');
     
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      if (activeTab === "signin") {
+        // Sign in with real Supabase
+        console.log('Attempting sign in:', formData.email);
+        await signIn(formData.email, formData.password);
+        
+        // Sign in successful - navigate to home
+        console.log('Sign in successful, navigating to home');
+        onNavigate?.('auth', 'modern-home');
+        
+      } else {
+        // Validate sign up form
+        if (formData.password !== formData.confirmPassword) {
+          toast.error('Passwords do not match');
+          setIsLoading(false);
+          setLoadingAction(null);
+          return;
+        }
+        
+        if (formData.password.length < 6) {
+          toast.error('Password must be at least 6 characters');
+          setIsLoading(false);
+          setLoadingAction(null);
+          return;
+        }
+        
+        if (!formData.agreeToTerms) {
+          toast.error('Please agree to the terms and conditions');
+          setIsLoading(false);
+          setLoadingAction(null);
+          return;
+        }
+        
+        // Sign up with real Supabase
+        console.log('Attempting sign up:', formData.email, formData.name);
+        const result = await signUp(formData.email, formData.password, {
+          full_name: formData.name
+        });
+        
+        console.log('Sign up result:', result);
+        
+        // Check if email confirmation is required
+        if (result?.session) {
+          // User is automatically logged in
+          console.log('User logged in after sign up, navigating to onboarding');
+          onNavigate?.('auth', 'onboarding-step-1', { 
+            email: formData.email,
+            name: formData.name 
+          });
+        } else {
+          // Email confirmation required
+          console.log('Email confirmation required');
+          toast.info('Please check your email to verify your account');
+          setActiveTab('signin');
+        }
+      }
+    } catch (error: any) {
+      console.error('Auth error:', error);
+      
+      if (error.message?.includes('already registered')) {
+        toast.error('This email is already registered. Please sign in.');
+        setActiveTab('signin');
+      } else if (error.message?.includes('Invalid login credentials')) {
+        toast.error('Invalid email or password');
+      } else {
+        toast.error(error.message || 'Authentication failed');
+      }
+    } finally {
       setIsLoading(false);
       setLoadingAction(null);
-      if (activeTab === "signin") {
-        // Sign in successful - navigate to home
-        onNavigate?.('auth', 'modern-home');
-      } else {
-        // Sign up successful - navigate to onboarding
-        onNavigate?.('auth', 'onboarding-step-1', { 
-          email: formData.email,
-          name: formData.name 
-        });
-      }
-    }, 2000);
+    }
   };
 
-  const handleOAuthSignIn = (provider: 'google' | 'github') => {
+  const handleOAuthSignIn = async (provider: 'google' | 'github') => {
     setLoadingAction(provider);
-    // Simulate OAuth flow
-    setTimeout(() => {
-      setLoadingAction(null);
+    
+    try {
+      if (provider === 'google') {
+        await signInWithGoogle();
+      } else {
+        await signInWithGithub();
+      }
+      
+      // OAuth successful - navigate to home
       onNavigate?.('auth', 'modern-home');
-    }, 1500);
+    } catch (error: any) {
+      console.error('OAuth error:', error);
+      toast.error(error.message || `Failed to sign in with ${provider}`);
+    } finally {
+      setLoadingAction(null);
+    }
   };
 
   const handleBack = () => {
