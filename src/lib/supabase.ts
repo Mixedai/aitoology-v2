@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 
 // Supabase client configuration - provide defaults for missing env vars
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://tbvfyhtkrvetmcibalfb.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRidmZ5aHRrcnZldG1jaWJhbGZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYyNDQ4MTksImV4cCI6MjA3MTgyMDgxOX0.ORMbDCOOLQo5Yq1pqGSyq3F9grBAvnMJiCvA4BLyqvE';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRidmZ5aHRrcnZldG1jaWJhbGZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYyMzg3MzYsImV4cCI6MjA3MTgxNDczNn0.depr2savD-hvx6f18aZJLfvg7oWBLBxlDu4q9tmkg3w';
 
 // Always log configuration to debug
 console.log('🔧 Supabase Configuration:', {
