@@ -1673,6 +1673,7 @@ export function ExploreFrame({ onNavigate, className = "" }: ExploreFrameProps) 
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         defaultTab={authModalTab}
+        onNavigate={onNavigate}
       />
     </div>
   );

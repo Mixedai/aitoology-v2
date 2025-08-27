@@ -66,8 +66,8 @@ export function AuthOnboarding({ onNavigate, currentScreen = 'auth' }: AuthOnboa
         // Sign in successful - navigate to home
         onNavigate?.('auth', 'modern-home');
       } else {
-        // Sign up successful - navigate to home
-        onNavigate?.('auth', 'modern-home', { 
+        // Sign up successful - navigate to onboarding
+        onNavigate?.('auth', 'onboarding-step-1', { 
           email: formData.email,
           name: formData.name 
         });

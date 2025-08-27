@@ -25,9 +25,10 @@ interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   defaultTab?: 'login' | 'register';
+  onNavigate?: (fromScreen: string, toScreen: string, params?: any) => void;
 }
 
-export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalProps) {
+export function AuthModal({ isOpen, onClose, defaultTab = 'login', onNavigate }: AuthModalProps) {
   const { signIn, signUp, signInWithGoogle, signInWithGithub, resetPassword } = useAuth();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -87,10 +88,17 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
       
       // Check if user was created and logged in
       if (result?.session) {
-        // User is confirmed and logged in, close modal
-        console.log('User logged in after sign up, closing modal');
+        // User is confirmed and logged in, navigate to onboarding
+        console.log('User logged in after sign up, navigating to onboarding');
         onClose();
         resetForm();
+        // Navigate to onboarding if navigation is available
+        if (onNavigate) {
+          onNavigate('auth', 'onboarding-step-1', {
+            email: email,
+            fullName: fullName
+          });
+        }
       } else {
         // Email confirmation required
         console.log('Email confirmation required, keeping modal open');
