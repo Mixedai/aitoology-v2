@@ -81,14 +81,22 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
     
     try {
       console.log('Attempting to sign up with:', { email, fullName });
-      await signUp(email, password, { full_name: fullName });
+      const result = await signUp(email, password, { full_name: fullName });
       
-      // Don't close modal immediately if email verification is needed
-      toast.info('Registration successful! You may need to verify your email.');
+      console.log('Sign up result:', result);
       
-      // Switch to login tab
-      setActiveTab('login');
-      resetForm();
+      // Check if user was created and logged in
+      if (result?.session) {
+        // User is confirmed and logged in, close modal
+        console.log('User logged in after sign up, closing modal');
+        onClose();
+        resetForm();
+      } else {
+        // Email confirmation required
+        console.log('Email confirmation required, keeping modal open');
+        setActiveTab('login');
+        resetForm();
+      }
     } catch (error: any) {
       console.error('Register error details:', error);
       

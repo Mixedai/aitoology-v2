@@ -1,64 +1,46 @@
-// Node.js script to create user with service role key
-// Run with: node create-test-user.js
+import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
 
-const { createClient } = require('@supabase/supabase-js');
-require('dotenv').config();
+dotenv.config();
 
 const supabaseUrl = process.env.VITE_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false
-  }
-});
+if (!supabaseUrl || !supabaseServiceKey) {
+  console.error('Missing environment variables');
+  process.exit(1);
+}
+
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 async function createTestUser() {
+  const email = 'newtest@aitoologist.com';
+  const password = 'Test123456!';
+  
   try {
-    // Create user with admin API
+    // Create user with admin privileges (auto-confirms email)
     const { data, error } = await supabase.auth.admin.createUser({
-      email: 'testuser@gmail.com',
-      password: 'TestUser123!',
-      email_confirm: true, // Auto confirm email
+      email: email,
+      password: password,
+      email_confirm: true,
       user_metadata: {
         full_name: 'Test User'
       }
     });
-
+    
     if (error) {
       console.error('Error creating user:', error);
       return;
     }
-
+    
     console.log('✅ User created successfully!');
-    console.log('Email:', data.user.email);
-    console.log('ID:', data.user.id);
-    console.log('Confirmed:', data.user.email_confirmed_at ? 'Yes' : 'No');
-
-    // Create profile
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .insert({
-        id: data.user.id,
-        full_name: 'Test User',
-        username: 'testuser',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      });
-
-    if (profileError) {
-      console.error('Profile error:', profileError);
-    } else {
-      console.log('✅ Profile created!');
-    }
-
-    console.log('\n📝 Login credentials:');
-    console.log('Email: testuser@gmail.com');
-    console.log('Password: TestUser123!');
-
-  } catch (err) {
-    console.error('Unexpected error:', err);
+    console.log('Email:', email);
+    console.log('Password:', password);
+    console.log('User ID:', data.user?.id);
+    console.log('Confirmed:', data.user?.confirmed_at ? 'Yes' : 'No');
+    
+  } catch (error) {
+    console.error('Failed to create user:', error);
   }
 }
 

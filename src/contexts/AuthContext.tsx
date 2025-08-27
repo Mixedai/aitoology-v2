@@ -55,6 +55,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signUp = async (email: string, password: string, metadata?: any) => {
     try {
+      console.log('Starting sign up for:', email);
+      
       const { error, data } = await supabase.auth.signUp({
         email,
         password,
@@ -64,21 +66,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         },
       });
 
+      console.log('Sign up response:', { data, error });
+
       if (error) throw error;
 
       if (data?.user) {
-        // Check if email confirmation is required
-        if (data.user.identities && data.user.identities.length === 0) {
-          toast.warning('Please check your email to verify your account.');
+        console.log('User created:', data.user);
+        console.log('Session:', data.session);
+        
+        // If session exists, user is automatically confirmed
+        if (data.session) {
+          console.log('User confirmed, setting session');
+          setUser(data.user);
+          setSession(data.session);
+          toast.success('Account created successfully! You are now logged in.');
         } else {
-          toast.success('Account created successfully!');
-          // Auto sign in if email verification is disabled
-          if (data.session) {
-            setUser(data.user);
-            setSession(data.session);
-          }
+          // Email confirmation required
+          console.log('Email confirmation required');
+          toast.warning('Please check your email to verify your account.');
         }
+      } else {
+        console.error('No user data returned from sign up');
+        throw new Error('Sign up failed - no user data returned');
       }
+      
+      return data;
     } catch (error: any) {
       console.error('Sign up error:', error);
       toast.error(error.message || 'Failed to sign up');
