@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Direct Sign Up Test</title>
+</head>
+<body>
+    <h1>Direct Supabase Sign Up Test</h1>
+    
+    <form id="signupForm">
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="password" id="password" placeholder="Password" required />
+        <button type="submit">Sign Up</button>
+    </form>
+    
+    <div id="result"></div>
+    
+    <script type="module">
+        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+        
+        const supabaseUrl = 'https://tbvfyhtkrvetmcibalfb.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRidmZ5aHRrcnZldG1jaWJhbGZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYyMzg3MzYsImV4cCI6MjA3MTgxNDczNn0.depr2savD-hvx6f18aZJLfvg7oWBLBxlDu4q9tmkg3w';
+        
+        const supabase = createClient(supabaseUrl, supabaseKey);
+        
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            console.log('Attempting sign up:', email);
+            
+            try {
+                const { data, error } = await supabase.auth.signUp({
+                    email,
+                    password
+                });
+                
+                console.log('Sign up response:', { data, error });
+                
+                if (error) {
+                    document.getElementById('result').innerHTML = `
+                        <h3 style="color: red;">❌ Sign Up Failed</h3>
+                        <p>${error.message}</p>
+                        <pre>${JSON.stringify(error, null, 2)}</pre>
+                    `;
+                } else {
+                    document.getElementById('result').innerHTML = `
+                        <h3 style="color: green;">✅ Sign Up Successful!</h3>
+                        <p>User ID: ${data.user?.id}</p>
+                        <p>Email: ${data.user?.email}</p>
+                        <p>Confirmed: ${data.user?.confirmed_at ? 'Yes' : 'No'}</p>
+                        <p>Session: ${data.session ? 'Active' : 'None'}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                document.getElementById('result').innerHTML = `
+                    <h3 style="color: red;">❌ Error</h3>
+                    <pre>${err.toString()}</pre>
+                `;
+            }
+        });
+        
+        // Check connection
+        supabase.auth.getSession().then(({ data, error }) => {
+            console.log('Connection test:', { data, error });
+        });
+    </script>
+</body>
+</html>

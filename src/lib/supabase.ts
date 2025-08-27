@@ -4,14 +4,13 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
-// Debug log (only in development)
-if (import.meta.env.DEV) {
-  console.log('Supabase Configuration:', {
-    url: supabaseUrl,
-    hasKey: !!supabaseAnonKey,
-    keyLength: supabaseAnonKey.length
-  });
-}
+// Always log configuration to debug
+console.log('🔧 Supabase Configuration:', {
+  url: supabaseUrl || 'NOT SET',
+  hasKey: !!supabaseAnonKey,
+  keyLength: supabaseAnonKey.length,
+  env: import.meta.env
+});
 
 // Validate configuration
 if (!supabaseUrl || !supabaseAnonKey) {
