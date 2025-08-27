@@ -580,6 +580,24 @@ export function ExploreFrame({ onNavigate, className = "" }: ExploreFrameProps) 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalTab, setAuthModalTab] = useState<'login' | 'register'>('login');
   
+  // Map database categories to UI format with icons - MOVED BEFORE useEffect
+  const categoryIcons: { [key: string]: any } = {
+    'Chatbot': Brain,
+    'Design': Sparkles,
+    'Development': Cpu,
+    'Productivity': Zap,
+    'Research': CircuitBoard,
+    'Video': Bot,
+    'Writing': FileText
+  };
+  
+  const categories = dbCategories.map(cat => ({
+    id: cat.slug,
+    name: cat.name,
+    icon: categoryIcons[cat.name] || Boxes,
+    count: cat.tool_count || 0
+  }));
+
   // Handle search and category changes
   useEffect(() => {
     if (searchQuery.trim()) {
@@ -608,24 +626,6 @@ export function ExploreFrame({ onNavigate, className = "" }: ExploreFrameProps) 
   const categoriesInView = useInView(categoriesRef, { once: true, margin: "-100px" });
   const toolsInView = useInView(toolsRef, { once: true, margin: "-50px" });
   const compareInView = useInView(compareRef, { once: true, margin: "-50px" });
-
-  // Map database categories to UI format with icons
-  const categoryIcons: { [key: string]: any } = {
-    'Chatbot': Brain,
-    'Design': Sparkles,
-    'Development': Cpu,
-    'Productivity': Zap,
-    'Research': CircuitBoard,
-    'Video': Bot,
-    'Writing': FileText
-  };
-  
-  const categories = dbCategories.map(cat => ({
-    id: cat.slug,
-    name: cat.name,
-    icon: categoryIcons[cat.name] || Boxes,
-    count: cat.tool_count || 0
-  }));
   
   // Original mock categories for fallback
   const mockCategories = [
