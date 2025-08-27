@@ -4,18 +4,22 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
-// Debug log
-console.log('Supabase Configuration:', {
-  url: supabaseUrl,
-  hasKey: !!supabaseAnonKey,
-  keyLength: supabaseAnonKey.length
-});
+// Debug log (only in development)
+if (import.meta.env.DEV) {
+  console.log('Supabase Configuration:', {
+    url: supabaseUrl,
+    hasKey: !!supabaseAnonKey,
+    keyLength: supabaseAnonKey.length
+  });
+}
 
 // Validate configuration
 if (!supabaseUrl || !supabaseAnonKey) {
   console.error('Supabase configuration is missing!');
-  console.error('URL:', supabaseUrl);
-  console.error('Key exists:', !!supabaseAnonKey);
+  if (import.meta.env.DEV) {
+    console.error('URL:', supabaseUrl);
+    console.error('Key exists:', !!supabaseAnonKey);
+  }
 }
 
 // Create Supabase client with proper auth settings
@@ -27,7 +31,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     detectSessionInUrl: true,
     autoRefreshToken: true,
     flowType: 'pkce', // Use PKCE flow for better security
-    debug: true // Enable debug mode
+    debug: import.meta.env.DEV // Enable debug mode only in development
   }
 });
 
