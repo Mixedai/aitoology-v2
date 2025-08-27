@@ -95,7 +95,7 @@ export function OnboardingStep2Frame({
 
   const handleNext = () => {
     if (onNavigate) {
-      onNavigate('onboarding-step-3', { 
+      onNavigate('onboarding-step-2', 'onboarding-step-3', { 
         ...initialData,
         notificationPreferences: preferences 
       });
@@ -104,7 +104,7 @@ export function OnboardingStep2Frame({
 
   const handleBack = () => {
     if (onNavigate) {
-      onNavigate('onboarding-step-1');
+      onNavigate('onboarding-step-2', 'onboarding-step-1');
     }
   };
 

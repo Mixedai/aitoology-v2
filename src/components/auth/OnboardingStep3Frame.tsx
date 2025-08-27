@@ -92,7 +92,7 @@ export function OnboardingStep3Frame({
   const handleFinish = () => {
     if (onNavigate) {
       // Navigate to Browse Tools with pre-filled filters based on selected interests
-      onNavigate('browse', { 
+      onNavigate('onboarding-step-3', 'browse', { 
         preFilledCategories: selectedInterests,
         onboardingComplete: true 
       });
@@ -101,7 +101,7 @@ export function OnboardingStep3Frame({
 
   const handleBack = () => {
     if (onNavigate) {
-      onNavigate('onboarding-step-2');
+      onNavigate('onboarding-step-3', 'onboarding-step-2');
     }
   };
 

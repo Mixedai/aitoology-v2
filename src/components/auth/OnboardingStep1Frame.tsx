@@ -107,13 +107,13 @@ export function OnboardingStep1Frame({ onNavigate, showVariants = true }: Onboar
 
   const handleNext = () => {
     if (onNavigate) {
-      onNavigate('onboarding-step-2', { selectedInterests });
+      onNavigate('onboarding-step-1', 'onboarding-step-2', { selectedInterests });
     }
   };
 
   const handleBack = () => {
     if (onNavigate) {
-      onNavigate('auth');
+      onNavigate('onboarding-step-1', 'auth');
     }
   };
 
