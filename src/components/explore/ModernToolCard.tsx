@@ -5,7 +5,9 @@ import {
   Star, 
   Users, 
   ArrowRight,
-  Bookmark
+  Bookmark,
+  GitCompare,
+  Check
 } from 'lucide-react';
 
 interface ModernToolCardProps {
@@ -28,8 +30,12 @@ interface ModernToolCardProps {
   viewMode?: 'grid' | 'list';
   isBookmarked?: boolean;
   onToolClick?: (tool: any) => void;
+  onNavigate?: (from: string, to: string, params?: any) => void;
   onBookmark?: (toolId: string) => void;
   onAction?: (action: string, toolId: string) => void;
+  onSelect?: (tool: any) => void;
+  showSelectButton?: boolean;
+  isSelected?: boolean;
   index?: number;
 }
 
@@ -38,14 +44,32 @@ export function ModernToolCard({
   viewMode = 'grid', 
   isBookmarked = false,
   onToolClick,
+  onNavigate,
   onBookmark,
   onAction,
+  onSelect,
+  showSelectButton,
+  isSelected,
   index = 0
 }: ModernToolCardProps) {
   const toolId = tool.id;
 
   const handleCardClick = () => {
-    onToolClick?.(tool);
+    // If onNavigate is provided, use it for navigation
+    if (onNavigate) {
+      console.log('🔍 ModernToolCard: Navigating to tool-detail', {
+        toolId: tool.id,
+        toolName: tool.name
+      });
+      onNavigate('explore-frame', 'tool-detail', {
+        tool_id: tool.id,
+        toolId: tool.id,
+        tool: tool
+      });
+    } else if (onToolClick) {
+      // Fallback to onToolClick if provided
+      onToolClick(tool);
+    }
   };
 
   const handleBookmarkClick = (e: React.MouseEvent) => {
@@ -58,9 +82,11 @@ export function ModernToolCard({
     <Card 
       className={`relative group cursor-pointer h-full overflow-hidden
         bg-white hover:shadow-lg
-        border border-gray-200
-        hover:border-purple-300
-        transition-all duration-200
+        border transition-all duration-200
+        ${isSelected 
+          ? 'border-purple-500 ring-2 ring-purple-200 shadow-lg' 
+          : 'border-gray-200 hover:border-purple-300'
+        }
         ${viewMode === 'list' ? 'flex flex-row' : 'flex flex-col'}
       `}
       onClick={handleCardClick}
@@ -99,13 +125,38 @@ export function ModernToolCard({
           </div>
         )}
 
-        {/* Bookmark */}
-        <button
-          className="absolute top-2 right-2 p-1.5 rounded-lg bg-white border border-gray-200 opacity-0 group-hover:opacity-100 transition-opacity"
-          onClick={handleBookmarkClick}
-        >
-          <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-purple-600 text-purple-600' : 'text-gray-500'}`} />
-        </button>
+        {/* Action Buttons */}
+        <div className="absolute top-2 right-2 flex gap-2">
+          {/* Compare Button */}
+          {showSelectButton && (
+            <button
+              className={`p-1.5 rounded-lg border transition-all ${
+                isSelected 
+                  ? 'bg-purple-600 border-purple-600 text-white' 
+                  : 'bg-white border-gray-200 text-gray-500 opacity-0 group-hover:opacity-100'
+              }`}
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelect?.(tool);
+              }}
+              title={isSelected ? "Remove from compare" : "Add to compare"}
+            >
+              {isSelected ? (
+                <Check className="w-4 h-4" />
+              ) : (
+                <GitCompare className="w-4 h-4" />
+              )}
+            </button>
+          )}
+          
+          {/* Bookmark Button */}
+          <button
+            className="p-1.5 rounded-lg bg-white border border-gray-200 opacity-0 group-hover:opacity-100 transition-opacity"
+            onClick={handleBookmarkClick}
+          >
+            <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-purple-600 text-purple-600' : 'text-gray-500'}`} />
+          </button>
+        </div>
       </div>
 
       {/* Content */}

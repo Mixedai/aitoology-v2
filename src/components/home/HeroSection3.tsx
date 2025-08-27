@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { Search, BarChart3, Zap, ArrowRight } from "lucide-react";
 import { motion, useInView } from "framer-motion";
 

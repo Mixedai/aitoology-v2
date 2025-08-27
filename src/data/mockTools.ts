@@ -165,7 +165,7 @@ export const searchTools = (query: string): MockTool[] => {
     tool.name.toLowerCase().includes(lowercaseQuery) ||
     tool.description.toLowerCase().includes(lowercaseQuery) ||
     tool.category.toLowerCase().includes(lowercaseQuery) ||
-    tool.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery))
+    (tool.tags ?? []).some(tag => tag.toLowerCase().includes(lowercaseQuery))
   );
 };
 

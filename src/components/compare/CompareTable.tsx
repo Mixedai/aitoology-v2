@@ -1,8 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import { useMemo,useState, } from 'react';
+
 import { TableVirtuoso } from 'react-virtuoso';
-import type { ToolLite } from '@/types/compare';
+import type { ToolLite } from '../../types/compare';
 import { FEATURE_DICTIONARY, deriveValues } from './featureDictionary';
-import { displayBool, displayNumber, equalish } from '@/lib/normalize';
+import { displayBool, displayNumber, equalish } from '../../lib/normalize';
 
 export function CompareTable({ tools, diffOnly=false }:{
   tools: ToolLite[];
@@ -127,7 +128,7 @@ export function CompareTable({ tools, diffOnly=false }:{
                     } else if (c?.value_text !== undefined) {
                       display = c.value_text;
                     } else {
-                      display = '—';
+                      display = '\u2014';
                     }
                     
                     const isHovered = hoveredCol === i;

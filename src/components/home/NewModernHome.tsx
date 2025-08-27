@@ -1,9 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
+
+import { useRef, useState, useEffect } from 'react';
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { HeroSection2 } from "./HeroSection2";
 import { HeroSection3 } from "./HeroSection3";
+import { useAuth } from '@/contexts/AuthContext';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "../ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { 
   Search, 
   BarChart3, 
@@ -30,7 +40,11 @@ import {
   TestTube,
   FolderOpen,
   ChevronRight,
-  CheckCircle
+  CheckCircle,
+  User,
+  Settings,
+  LogOut,
+  UserCircle
 } from "lucide-react";
 import { motion, useScroll, useTransform, useInView, useSpring, useMotionValueEvent } from "framer-motion";
 
@@ -346,6 +360,7 @@ const AIJourneyRoadmap = ({ onNavigate }: { onNavigate?: (from: string, to: stri
       <div className="container mx-auto max-w-7xl relative z-10 w-full">
         <motion.div
           ref={roadmapRef}
+          className="relative"
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ duration: 1 }}
@@ -876,6 +891,7 @@ const TrendingCard = ({ tool, index, onNavigate }: { tool: any; index: number; o
 
 export function NewModernHome({ onNavigate }: NewModernHomeProps) {
   const { scrollYProgress } = useScroll();
+  const { user, signOut } = useAuth();
   
   // Enhanced parallax transforms with smooth spring physics
   const springConfig = { stiffness: 100, damping: 30, restDelta: 0.001 };

@@ -1,7 +1,7 @@
 // Navigation logging and error monitoring utility for AI Toologist
 // Provides comprehensive logging and debugging capabilities
 
-import type { NavigationError, NavigationLog, ScreenId } from '../types/navigation';
+import type { NavigationError, NavigationLog } from '../types/navigation';
 
 class NavigationLogger {
   private logs: NavigationLog[] = [];
@@ -329,7 +329,7 @@ export const createSafeNavigationHandler = (
     // Call navigation with validated parameters
     try {
       onNavigate(currentScreen, sanitizedToScreen, params);
-    } catch (error) {
+    } catch (_error) {
       console.error(`❌ ${componentName}: Navigation callback failed:`, error);
       navigationLogger.logError(
         navigationLogger.createError(

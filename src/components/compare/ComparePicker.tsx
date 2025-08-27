@@ -1,5 +1,6 @@
-import React, { useMemo, useState } from 'react';
-import type { ToolLite } from '@/types/compare';
+import { useMemo,useState, } from 'react';
+
+import type { ToolLite } from '../../types/compare';
 
 export function ComparePicker({ all, selected, onChange }:{
   all: ToolLite[];

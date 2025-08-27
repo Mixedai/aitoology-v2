@@ -1,6 +1,13 @@
 import { createRoot } from "react-dom/client";
 import React from "react";
 import "./index.css";
+import { setupGlobalErrorHandlers, cleanupBrowserExtensions } from "./utils/errorHandler";
+
+// Set up global error handlers before anything else
+setupGlobalErrorHandlers();
+
+// Clean up browser extension artifacts
+cleanupBrowserExtensions();
 
 // Try to load the main App with error boundary
 const App = React.lazy(() => import("./App.tsx"));
@@ -50,7 +57,18 @@ class ErrorBoundary extends React.Component<
   }
 }
 
-createRoot(document.getElementById("root")!).render(
+// Store root to prevent duplicate creation
+const container = document.getElementById("root");
+if (!container) throw new Error("Root element not found");
+
+// Check if root already exists (for HMR)
+let root = (window as any).__REACT_ROOT__;
+if (!root) {
+  root = createRoot(container);
+  (window as any).__REACT_ROOT__ = root;
+}
+
+root.render(
   <ErrorBoundary>
     <React.Suspense fallback={
       <div className="min-h-screen flex items-center justify-center">

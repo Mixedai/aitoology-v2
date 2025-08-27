@@ -1,4 +1,4 @@
-import type { WorkflowNode, WorkflowConnection, Tool } from './types';
+import type { WorkflowNode, Tool } from './types';
 
 // Utility Functions
 export const generateNodeId = () => `node_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;

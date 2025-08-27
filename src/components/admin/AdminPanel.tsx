@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -10,7 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Alert, AlertDescription } from '../ui/alert';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { 
   Settings, 
   Users, 
@@ -385,7 +386,7 @@ export function AdminPanel() {
                         <TableCell>{getUserStatusBadge(user.status)}</TableCell>
                         <TableCell>
                           <div className="flex gap-2">
-                            <Select onValueChange={(value) => handleChangeUserRole(user.id, value)}>
+                            <Select onValueChange={(value: string) => handleChangeUserRole(user.id, value)}>
                               <SelectTrigger className="w-auto">
                                 <SelectValue placeholder="Change Role" />
                               </SelectTrigger>

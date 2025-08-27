@@ -9,7 +9,7 @@ import { Alert, AlertDescription } from '../ui/alert';
 import { Label } from '../ui/label';
 import { Progress } from '../ui/progress';
 import { Skeleton } from '../ui/skeleton';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { 
   Heart, 
   ThumbsUp, 

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Direct Login</title>
+</head>
+<body>
+    <h1>Direct Login to Supabase</h1>
+    
+    <button onclick="doLogin()">Login as demo@test.com</button>
+    <div id="result"></div>
+    
+    <script type="module">
+        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+        
+        const supabase = createClient(
+            'https://tbvfyhtkrvetmcibalfb.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRidmZ5aHRrcnZldG1jaWJhbGZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYyMzg3MzYsImV4cCI6MjA3MTgxNDczNn0.depr2savD-hvx6f18aZJLfvg7oWBLBxlDu4q9tmkg3w',
+            {
+                auth: {
+                    persistSession: true,
+                    storageKey: 'sb-tbvfyhtkrvetmcibalfb-auth-token',
+                    storage: window.localStorage,
+                    autoRefreshToken: true,
+                    detectSessionInUrl: true
+                }
+            }
+        );
+        
+        window.doLogin = async () => {
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: 'demo@test.com',
+                    password: 'Demo123456!'
+                });
+                
+                if (error) throw error;
+                
+                document.getElementById('result').innerHTML = `
+                    <h3>✅ Login Successful!</h3>
+                    <p>User: ${data.user.email}</p>
+                    <p>Now redirecting to app...</p>
+                `;
+                
+                // Get the token from localStorage
+                const token = localStorage.getItem('sb-tbvfyhtkrvetmcibalfb-auth-token');
+                console.log('Token stored:', !!token);
+                
+                if (token) {
+                    // Generate command for main app
+                    const command = `
+                        // Run this in the console at localhost:5173
+                        localStorage.setItem('sb-tbvfyhtkrvetmcibalfb-auth-token', '${token.replace(/'/g, "\\'")}');
+                        location.reload();
+                    `;
+                    console.log(command);
+                    
+                    setTimeout(() => {
+                        window.location.href = 'http://localhost:5173';
+                    }, 2000);
+                }
+                
+            } catch (error) {
+                document.getElementById('result').innerHTML = `<h3>❌ Error: ${error.message}</h3>`;
+            }
+        };
+    </script>
+</body>
+</html>

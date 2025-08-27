@@ -43,7 +43,7 @@ import { Slider } from '../ui/slider';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Checkbox } from '../ui/checkbox';
 import { Textarea } from '../ui/textarea';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 
 interface SettingsProps {
   onNavigate?: (from: string, to: string, params?: any) => void;

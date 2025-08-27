@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Copy Session Token</title>
+</head>
+<body>
+    <h1>Copy Session Token</h1>
+    <p>Copy the token below and paste it in the main app console:</p>
+    
+    <textarea id="token" rows="10" cols="80" readonly></textarea>
+    <br>
+    <button onclick="copyToken()">Copy Token</button>
+    <button onclick="goToApp()">Go to App</button>
+    
+    <script>
+        // Get token from localStorage
+        const token = localStorage.getItem('sb-auth-token');
+        
+        if (token) {
+            // Display token
+            document.getElementById('token').value = token;
+            
+            // Generate script to paste in main app
+            const script = `
+// Paste this in the main app console
+localStorage.setItem('sb-auth-token', '${token}');
+location.reload();
+            `;
+            
+            console.log('Token found! Copy and paste this in the main app console:');
+            console.log(script);
+        } else {
+            document.getElementById('token').value = 'No token found. Please login first.';
+        }
+        
+        function copyToken() {
+            const textarea = document.getElementById('token');
+            textarea.select();
+            document.execCommand('copy');
+            alert('Token copied to clipboard!');
+        }
+        
+        function goToApp() {
+            // Set token and redirect
+            window.location.href = 'http://localhost:5173';
+        }
+    </script>
+</body>
+</html>

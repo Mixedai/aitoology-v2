@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useEffect,useRef,useState, } from 'react';
+
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import { useState, useEffect } from 'react';
 import { 
   Home, 
   Search, 
@@ -10,7 +11,6 @@ import {
   User, 
   Code, 
   Palette,
-  Navigation,
   Settings as SettingsIcon,
   Globe,
   Zap,
@@ -29,6 +29,17 @@ import {
   MousePointer,
   Wand2
 } from 'lucide-react';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { Toaster } from 'sonner';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from './components/ui/dropdown-menu';
+import { Avatar, AvatarFallback } from './components/ui/avatar';
+import { LogOut, UserCircle } from 'lucide-react';
 
 // Import navigation types for type safety
 import type { 
@@ -49,9 +60,6 @@ import { AppRouter } from './components/navigation/AppRouter';
 import { CommandPalette } from './components/navigation/CommandPalette';
 // import { GlobalNavbarMaster } from './components/navigation/GlobalNavbarMaster';
 import { SimpleNavbar } from './components/navigation/SimpleNavbar';
-import { TestNavbar } from './components/navigation/TestNavbar';
-import { ModernNavbar } from './components/navigation/ModernNavbar';
-import { EnhancedNavbar } from './components/navigation/EnhancedNavbar';
 
 // Import all screen components
 import { AIToologistDesignSystem } from './components/design-system/AIToologistDesignSystem';
@@ -60,7 +68,6 @@ import { EnhancedButtonDesignSystem } from './components/design-system/EnhancedB
 import { AIToologistComponents } from './components/ui-library/AIToologistComponents';
 import { AIToologistHome } from './components/home/AIToologistHome';
 import { NewModernHome } from './components/home/NewModernHome';
-import { SimpleModernHome } from './components/home/SimpleModernHome';
 import { Explore } from './components/explore/Explore';
 import { ExploreFrame } from './components/explore/ExploreFrame';
 import { ToolDetail } from './components/tool-detail/ToolDetail';
@@ -188,11 +195,11 @@ const screens = [
   },
   {
     id: 'compare',
-    title: 'Compare Tools (Legacy)',
-    description: 'Legacy standalone comparison page. This functionality has been integrated into the main Tools page as a section. Navigate to "Tools" instead for the full experience including comparison features.',
+    title: 'Compare Tools',
+    description: 'Advanced AI tools comparison page with side-by-side feature analysis, pricing comparison, and user reviews. Select up to 5 tools to compare their capabilities, features, and pricing plans. Supports URL sharing and CSV export.',
     icon: GitCompare,
     component: ComparePage,
-    category: 'Legacy'
+    category: 'Core Pages'
   },
   {
     id: 'news',
@@ -458,17 +465,18 @@ const errorScreens = [
   }
 ];
 
-export default function App() {
+function AppContent() {
   const [currentScreen, setCurrentScreen] = useState('modern-home'); // DEFAULT TO MODERN HOME
   const [viewMode, setViewMode] = useState<'app' | 'overview' | 'router'>('app'); // CHANGED TO APP MODE
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isGlobalCommandPaletteOpen, setIsGlobalCommandPaletteOpen] = useState(false);
+  const { user, signOut } = useAuth();
 
   // Navigation state for detailed views and modals
   const [navigationState, setNavigationState] = useState({
     detailView: null as string | null,
     modalState: null as string | null,
-    selectedItem: null as any
+    selectedItem: undefined as any
   });
 
   const currentScreenData = screens.find(screen => screen.id === currentScreen) || 
@@ -527,13 +535,13 @@ export default function App() {
       setNavigationState({
         detailView,
         modalState: null,
-        selectedItem: selectedItem || null
+        selectedItem: selectedItem || undefined
       });
     } else {
       setNavigationState({
         detailView: null,
         modalState: null,
-        selectedItem: selectedItem || null // Always pass selectedItem, even without detailView
+        selectedItem: selectedItem || undefined // Always pass selectedItem, even without detailView
       });
     }
     
@@ -702,12 +710,32 @@ export default function App() {
         navigationLogger.logNavigation(from, 'grammarly-page', params);
         handleNavigation('grammarly-page', null, params);
       },
+
+      // Compare Page Navigation
+      'compare': (from, params) => {
+        console.log('🔍 Navigating to compare page with params:', params);
+        navigationLogger.logNavigation(from, 'compare', params);
+        
+        // If tools are provided, add them to the URL
+        if (params && params.tools) {
+          const urlParams = new URLSearchParams();
+          urlParams.set('tools', params.tools);
+          window.history.pushState({}, '', `#compare?${urlParams.toString()}`);
+        }
+        
+        handleNavigation('compare', null, params);
+      },
       'figma-ai-page': (from, params) => {
         navigationLogger.logNavigation(from, 'figma-ai-page', params);
         handleNavigation('figma-ai-page', null, params);
       },
 
       // Core page navigation
+      'explore-frame': (from, params) => {
+        navigationLogger.logNavigation(from, 'explore-frame', params);
+        handleNavigation('explore-frame', null, params);
+      },
+      
       'tool-detail': (from, params) => {
         console.log('🔍 App.tsx tool-detail navigation START:', {
           from,
@@ -876,10 +904,6 @@ export default function App() {
       },
       
       // Home navigation
-      'home': (from) => {
-        navigationLogger.logNavigation(from, 'modern-home');
-        handleNavigation('modern-home');
-      },
       'modern-home': (from) => {
         navigationLogger.logNavigation(from, 'modern-home');
         handleNavigation('modern-home');
@@ -1014,17 +1038,19 @@ export default function App() {
   // App Router View
   if (viewMode === 'router') {
     return (
-      <div className="min-h-screen" style={{ backgroundColor: '#E9E3DF' }}>
-        {/* Use SimpleNavbar for testing */}
+      <>
+        <Toaster position="bottom-right" />
+        <div id="app-root" className="relative min-h-screen" style={{ backgroundColor: '#E9E3DF' }}>
+          {/* Use SimpleNavbar for testing */}
         <SimpleNavbar onNavigate={(from, to) => handleNavigation(to)} />
         
-        <AppRouter onNavigateToScreen={handleNavigation} />
+        <AppRouter onNavigateToScreen={(toScreen, params) => handleNavigation(toScreen, undefined, params)} />
         
         {/* Global Command Palette for Router View */}
         <CommandPalette 
           isOpen={isGlobalCommandPaletteOpen}
           onClose={() => setIsGlobalCommandPaletteOpen(false)}
-          onNavigate={(from, to) => {
+          onNavigate={(to) => {
             handleNavigation(to);
             setIsGlobalCommandPaletteOpen(false);
           }}
@@ -1033,12 +1059,15 @@ export default function App() {
         {/* AI Chatbot - Available on router view */}
         <AIChatbot />
       </div>
+      </>
     );
   }
 
   // Individual Screen View with Global Navbar
   return (
-    <div className="min-h-screen">
+    <>
+      <Toaster position="bottom-right" />
+      <div id="app-root" className="relative min-h-screen">
       {/* Enhanced Modern Navbar - Transparent */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="container mx-auto px-6">
@@ -1134,25 +1163,61 @@ export default function App() {
 
             {/* Auth Buttons with Glassmorphism */}
             <div className="flex items-center gap-4">
-              <button
-                onClick={() => handleNavigation('sign-in')}
-                className="px-6 py-3 text-gray-700 font-semibold bg-white/30 backdrop-blur-md border border-white/50 rounded-2xl hover:bg-white/50 transition-all duration-300 hover:shadow-lg hover:scale-105"
-              >
-                Sign In
-              </button>
-              <button
-                onClick={() => handleNavigation('auth')}
-                className="relative px-8 py-3 font-bold text-white rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-2xl group overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl" />
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl blur-xl opacity-50 group-hover:opacity-100 transition-opacity" />
-                <span className="relative flex items-center gap-2">
-                  ✨ Get Started
-                  <svg className="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </span>
-              </button>
+              {user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="flex items-center gap-2 px-4 py-2 bg-white/30 backdrop-blur-md border border-white/50 rounded-2xl hover:bg-white/50 transition-all duration-300">
+                    <Avatar className="w-8 h-8">
+                      <AvatarFallback className="bg-gradient-to-br from-blue-600 to-purple-600 text-white">
+                        {user.email?.charAt(0).toUpperCase() || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="text-gray-700 font-medium">{user.email?.split('@')[0]}</span>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuItem onClick={() => handleNavigation('profile')}>
+                      <UserCircle className="w-4 h-4 mr-2" />
+                      Profile
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleNavigation('settings')}>
+                      <SettingsIcon className="w-4 h-4 mr-2" />
+                      Settings
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem 
+                      onClick={async () => {
+                        await signOut();
+                        handleNavigation('auth');
+                      }}
+                      className="text-red-600"
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Sign Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <>
+                  <button
+                    onClick={() => handleNavigation('sign-in')}
+                    className="px-6 py-3 text-gray-700 font-semibold bg-white/30 backdrop-blur-md border border-white/50 rounded-2xl hover:bg-white/50 transition-all duration-300 hover:shadow-lg hover:scale-105"
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    onClick={() => handleNavigation('auth')}
+                    className="relative px-8 py-3 font-bold text-white rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-2xl group overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl blur-xl opacity-50 group-hover:opacity-100 transition-opacity" />
+                    <span className="relative flex items-center gap-2">
+                      ✨ Get Started
+                      <svg className="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                      </svg>
+                    </span>
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -1179,7 +1244,7 @@ export default function App() {
               isAuthenticated={isAuthenticated}
               navigationState={navigationState.detailView}
               selectedItem={navigationState.selectedItem}
-              detailView={!!navigationState.detailView}
+              detailView={navigationState.detailView ? true : undefined}
               params={navigationState.selectedItem} // Pass params for ToolDetail component
             />
           </>
@@ -1199,5 +1264,14 @@ export default function App() {
       {/* AI Chatbot - Available on all screens */}
       <AIChatbot />
     </div>
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }

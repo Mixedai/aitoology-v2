@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+
+import { useState } from 'react';
 import {
   ArrowLeft,
   Calendar,
@@ -35,7 +36,7 @@ import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Separator } from "../ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { toast } from "sonner@2.0.3";
+import { toast } from "sonner";
 import { ImageWithFallback } from "../figma/ImageWithFallback";
 
 interface NewsDetailFrameProps {

@@ -32,9 +32,11 @@ import {
   BarChart,
   Download,
   Trophy,
-  FileText
+  FileText,
+  LogIn,
+  UserPlus
 } from "lucide-react";
-import { motion, useScroll, useTransform, useInView, useSpring } from "framer-motion";
+import { motion, useScroll, useTransform, useInView, useSpring, AnimatePresence } from "framer-motion";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
@@ -44,7 +46,12 @@ import { Checkbox } from "../ui/checkbox";
 import { Slider } from "../ui/slider";
 import { ModernToolCard } from './ModernToolCard';
 import { FilterChips } from './FilterChips';
-import { toast } from 'sonner@2.0.3';
+import { CompareModal } from '../compare/CompareModal';
+import { AuthModal } from '../auth/AuthModal';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
+import { useSupabaseTools } from '@/hooks/useSupabaseTools';
+import { useSupabaseCategories } from '@/hooks/useSupabaseCategories';
 
 interface ExploreFrameProps {
   onNavigate?: (fromScreen: string, toScreen: string, params?: any) => void;
@@ -548,6 +555,18 @@ export function ExploreFrame({ onNavigate, className = "" }: ExploreFrameProps) 
     target: containerRef,
     offset: ["start start", "end end"]
   });
+  const { user, signOut, loading: authLoading } = useAuth();
+  const { tools, loading: toolsLoading, searchTools, filterByCategory, filterByPricing } = useSupabaseTools();
+  const { categories: dbCategories, loading: categoriesLoading } = useSupabaseCategories();
+  
+  // Debug auth state
+  useEffect(() => {
+    console.log('ExploreFrame - Auth state changed:', { 
+      user: user?.email, 
+      userId: user?.id,
+      authLoading 
+    });
+  }, [user, authLoading]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [priceRange, setPriceRange] = useState([0, 100]);
@@ -556,6 +575,22 @@ export function ExploreFrame({ onNavigate, className = "" }: ExploreFrameProps) 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [currentTab, setCurrentTab] = useState<'browse' | 'compare'>('browse');
   const [selectedToolsForComparison, setSelectedToolsForComparison] = useState<any[]>([]);
+  const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
+  const [isLoadingCompare, setIsLoadingCompare] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalTab, setAuthModalTab] = useState<'login' | 'register'>('login');
+  
+  // Handle search and category changes
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      searchTools(searchQuery);
+    } else if (selectedCategory !== 'all') {
+      const categoryName = categories.find(c => c.id === selectedCategory)?.name;
+      if (categoryName) {
+        filterByCategory(categoryName);
+      }
+    }
+  }, [searchQuery, selectedCategory, categories]);
 
   // Parallax transforms
   const springConfig = { stiffness: 100, damping: 30, restDelta: 0.001 };
@@ -574,8 +609,26 @@ export function ExploreFrame({ onNavigate, className = "" }: ExploreFrameProps) 
   const toolsInView = useInView(toolsRef, { once: true, margin: "-50px" });
   const compareInView = useInView(compareRef, { once: true, margin: "-50px" });
 
-  // Mock data
-  const categories = [
+  // Map database categories to UI format with icons
+  const categoryIcons: { [key: string]: any } = {
+    'Chatbot': Brain,
+    'Design': Sparkles,
+    'Development': Cpu,
+    'Productivity': Zap,
+    'Research': CircuitBoard,
+    'Video': Bot,
+    'Writing': FileText
+  };
+  
+  const categories = dbCategories.map(cat => ({
+    id: cat.slug,
+    name: cat.name,
+    icon: categoryIcons[cat.name] || Boxes,
+    count: cat.tool_count || 0
+  }));
+  
+  // Original mock categories for fallback
+  const mockCategories = [
     { id: 'conversational', name: 'Conversational AI', icon: Brain, count: 25 },
     { id: 'creative', name: 'Creative AI', icon: Sparkles, count: 32 },
     { id: 'code', name: 'Code Assistant', icon: Cpu, count: 18 },
@@ -584,79 +637,25 @@ export function ExploreFrame({ onNavigate, className = "" }: ExploreFrameProps) 
     { id: 'automation', name: 'Automation', icon: Bot, count: 12 }
   ];
 
-  const tools = [
-    {
-      id: 'chatgpt-4',
-      name: 'ChatGPT-4',
-      description: 'Advanced AI chatbot for conversations, writing, coding, and creative tasks.',
-      category: 'Conversational AI',
-      rating: '4.8',
-      users: '100M+',
-      pricing: 'Free/Pro',
-      isPremium: true,
-      gradient: 'from-emerald-400 to-cyan-500',
-      icon: Brain
-    },
-    {
-      id: 'midjourney-v6',
-      name: 'Midjourney V6',
-      description: 'Create stunning, photorealistic images from text prompts.',
-      category: 'Creative AI',
-      rating: '4.9',
-      users: '15M+',
-      pricing: '$10/mo',
-      isPremium: true,
-      gradient: 'from-purple-400 to-pink-500',
-      icon: Sparkles
-    },
-    {
-      id: 'github-copilot',
-      name: 'GitHub Copilot',
-      description: 'AI pair programmer that helps you write code faster.',
-      category: 'Code Assistant',
-      rating: '4.7',
-      users: '5M+',
-      pricing: '$10/mo',
-      gradient: 'from-slate-400 to-slate-600',
-      icon: Cpu
-    },
-    {
-      id: 'notion-ai',
-      name: 'Notion AI',
-      description: 'AI-powered writing assistant integrated into Notion.',
-      category: 'Productivity',
-      rating: '4.6',
-      users: '30M+',
-      pricing: '$8/mo',
-      gradient: 'from-gray-400 to-gray-600',
-      icon: Zap
-    },
-    {
-      id: 'claude-3',
-      name: 'Claude 3',
-      description: 'Helpful, harmless, and honest AI assistant by Anthropic.',
-      category: 'Conversational AI',
-      rating: '4.8',
-      users: '8M+',
-      pricing: 'Free/Pro',
-      isPremium: true,
-      gradient: 'from-orange-400 to-red-500',
-      icon: Brain
-    },
-    {
-      id: 'perplexity',
-      name: 'Perplexity AI',
-      description: 'AI-powered answer engine with cited sources.',
-      category: 'Research',
-      rating: '4.5',
-      users: '12M+',
-      pricing: 'Free/Pro',
-      gradient: 'from-blue-400 to-indigo-500',
-      icon: Network
-    }
-  ];
+  // Map Supabase tools to UI format
+  const formattedTools = tools.map(tool => ({
+    id: tool.slug || tool.id,
+    name: tool.name,
+    description: tool.description,
+    category: tool.category,
+    rating: tool.rating ? tool.rating.toString() : '4.5',
+    users: '10M+', // This could be added to database
+    pricing: tool.pricing,
+    isPremium: tool.pricing !== 'Free',
+    gradient: getToolGradient(tool),
+    icon: categoryIcons[tool.category] || Brain,
+    features: tool.features || [],
+    tags: tool.tags || [],
+    website_url: tool.website_url,
+    logo_emoji: tool.logo_emoji
+  }));
 
-  const filteredTools = tools.filter(tool => {
+  const filteredTools = formattedTools.filter(tool => {
     const matchesSearch = tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          tool.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === 'all' || 
@@ -804,6 +803,56 @@ export function ExploreFrame({ onNavigate, className = "" }: ExploreFrameProps) 
 
       {/* MAIN CONTENT */}
       <div className="relative z-10 pt-20">
+        {/* Auth Buttons */}
+        <div className="absolute top-6 right-6 z-20 flex items-center gap-3">
+          {authLoading ? (
+            <div className="px-4 py-2 bg-white/90 backdrop-blur-md rounded-full shadow-lg">
+              <span className="text-gray-600 text-sm">Loading...</span>
+            </div>
+          ) : user ? (
+            <>
+              <div className="flex items-center gap-2 px-4 py-2 bg-white/90 backdrop-blur-md rounded-full shadow-lg">
+                <Users className="w-4 h-4 text-purple-600" />
+                <span className="text-gray-800 font-medium text-sm">{user.email?.split('@')[0]}</span>
+              </div>
+              <Button
+                onClick={() => signOut()}
+                variant="outline"
+                className="bg-white/90 backdrop-blur-md hover:bg-white shadow-lg"
+                size="sm"
+              >
+                Sign Out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                onClick={() => {
+                  setAuthModalTab('login');
+                  setIsAuthModalOpen(true);
+                }}
+                variant="ghost"
+                className="text-gray-700 hover:bg-white/50 backdrop-blur-md"
+                size="sm"
+              >
+                <LogIn className="w-4 h-4 mr-2" />
+                Sign In
+              </Button>
+              <Button
+                onClick={() => {
+                  setAuthModalTab('register');
+                  setIsAuthModalOpen(true);
+                }}
+                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-700 hover:to-indigo-700 shadow-lg"
+                size="sm"
+              >
+                <UserPlus className="w-4 h-4 mr-2" />
+                Get Started
+              </Button>
+            </>
+          )}
+        </div>
+
         {/* HERO SECTION */}
         <section 
           ref={heroRef}
@@ -1084,7 +1133,12 @@ export function ExploreFrame({ onNavigate, className = "" }: ExploreFrameProps) 
                     onClick={() => {
                       // Filter tools by category instead of navigating
                       setSearchQuery('');
-                      setSelectedCategory(category.name);
+                      setSelectedCategory(category.id);
+                      if (category.id === 'all') {
+                        searchTools('');
+                      } else {
+                        filterByCategory(category.name);
+                      }
                       // Scroll to tools section
                       toolsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }}
@@ -1132,7 +1186,7 @@ export function ExploreFrame({ onNavigate, className = "" }: ExploreFrameProps) 
                       {/* Main Category Badge */}
                       <div 
                         className={`relative backdrop-blur-md rounded-2xl shadow-lg px-6 py-4 min-w-[160px] overflow-hidden transition-transform duration-300 border ${
-                          selectedCategory === category.name 
+                          selectedCategory === category.id 
                             ? 'bg-blue-600 border-2 border-white scale-105' 
                             : 'bg-white/80 border-white/50'
                         }`}
@@ -1169,7 +1223,7 @@ export function ExploreFrame({ onNavigate, className = "" }: ExploreFrameProps) 
                         
                         {/* Category Name */}
                         <h3 className={`font-bold text-sm mb-1 relative ${
-                          selectedCategory === category.name ? 'text-white' : 'text-gray-800'
+                          selectedCategory === category.id ? 'text-white' : 'text-gray-800'
                         }`}>
                           {category.name}
                         </h3>
@@ -1177,14 +1231,14 @@ export function ExploreFrame({ onNavigate, className = "" }: ExploreFrameProps) 
                         {/* Tool Count Badge */}
                         <div className="flex items-center justify-center gap-1">
                           <span className={`text-2xl font-bold ${
-                            selectedCategory === category.name 
+                            selectedCategory === category.id 
                               ? 'text-white' 
                               : 'bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent'
                           }`}>
                             {category.count}
                           </span>
                           <span className={`text-xs ${
-                            selectedCategory === category.name ? 'text-white/80' : 'text-gray-500'
+                            selectedCategory === category.id ? 'text-white/80' : 'text-gray-500'
                           }`}>tools</span>
                         </div>
                         
@@ -1271,27 +1325,44 @@ export function ExploreFrame({ onNavigate, className = "" }: ExploreFrameProps) 
             </motion.div>
 
             {/* Tools Grid */}
-            <motion.div 
-              className={viewMode === 'grid' 
-                ? "grid grid-cols-4 gap-6 pt-8"
-                : "space-y-6 pt-8"
-              }
-              initial={{ opacity: 0 }}
-              animate={toolsInView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              {filteredTools.map((tool, index) => (
-                <ModernToolCard 
-                  key={tool.id} 
-                  tool={tool} 
-                  index={index}
-                  onNavigate={onNavigate}
-                  showSelectButton={currentTab === 'compare'}
-                  isSelected={selectedToolsForComparison.some(t => t.id === tool.id)}
-                  onSelect={handleToolSelect}
-                />
-              ))}
-            </motion.div>
+            {toolsLoading ? (
+              <div className="flex items-center justify-center py-20">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+                  <p className="text-muted-foreground">Loading tools...</p>
+                </div>
+              </div>
+            ) : filteredTools.length === 0 ? (
+              <div className="flex items-center justify-center py-20">
+                <div className="text-center">
+                  <CircuitBoard className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                  <p className="text-xl font-medium text-gray-600 mb-2">No tools found</p>
+                  <p className="text-muted-foreground">Try adjusting your search or filters</p>
+                </div>
+              </div>
+            ) : (
+              <motion.div 
+                className={viewMode === 'grid' 
+                  ? "grid grid-cols-4 gap-6 pt-8"
+                  : "space-y-6 pt-8"
+                }
+                initial={{ opacity: 0 }}
+                animate={toolsInView ? { opacity: 1 } : {}}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
+                {filteredTools.map((tool, index) => (
+                  <ModernToolCard 
+                    key={tool.id} 
+                    tool={tool} 
+                    index={index}
+                    onNavigate={onNavigate}
+                    showSelectButton={true}
+                    isSelected={selectedToolsForComparison.some(t => t.id === tool.id)}
+                    onSelect={handleToolSelect}
+                  />
+                ))}
+              </motion.div>
+            )}
 
             {/* Load More Button - Only in browse mode */}
             {currentTab === 'browse' && (
@@ -1382,6 +1453,221 @@ export function ExploreFrame({ onNavigate, className = "" }: ExploreFrameProps) 
           </section>
         )}
       </div>
+      
+      {/* Floating Compare Bar */}
+      <AnimatePresence>
+        {selectedToolsForComparison.length > 0 && (
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50"
+        >
+          <div className="bg-white/95 backdrop-blur-lg rounded-full shadow-2xl border border-purple-200 px-6 py-4 flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <GitCompare className="w-5 h-5 text-purple-600" />
+              <span className="font-semibold text-gray-800">
+                {selectedToolsForComparison.length} tools selected
+              </span>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              {selectedToolsForComparison.map(tool => (
+                <div
+                  key={tool.id}
+                  className="flex items-center gap-2 bg-purple-100 rounded-full px-3 py-1.5"
+                >
+                  <span className="text-2xl">{tool.logo}</span>
+                  <span className="text-sm font-medium text-gray-700">{tool.name}</span>
+                  <button
+                    onClick={() => handleRemoveFromComparison(tool.id)}
+                    className="ml-1 hover:bg-purple-200 rounded-full p-0.5 transition-colors"
+                  >
+                    <X className="w-3.5 h-3.5 text-gray-600" />
+                  </button>
+                </div>
+              ))}
+            </div>
+            
+            <div className="flex items-center gap-2">
+              {selectedToolsForComparison.length >= 2 && (
+                <motion.button
+                  onClick={() => {
+                    setIsLoadingCompare(true);
+                    setTimeout(() => {
+                      setIsCompareModalOpen(true);
+                      setIsLoadingCompare(false);
+                    }, 3500);
+                  }}
+                  disabled={isLoadingCompare}
+                  className="relative px-6 py-2 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white font-semibold rounded-full shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
+                  whileHover={!isLoadingCompare ? { scale: 1.05 } : {}}
+                  whileTap={!isLoadingCompare ? { scale: 0.95 } : {}}
+                >
+                  <span className="absolute inset-0 rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 blur-lg opacity-60 group-hover:opacity-100 transition-opacity" />
+                  <span className="relative flex items-center">
+                    {isLoadingCompare ? (
+                      <>
+                        <motion.div
+                          className="w-4 h-4 mr-2"
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        >
+                          <svg className="w-4 h-4" viewBox="0 0 24 24">
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                              fill="none"
+                            />
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            />
+                          </svg>
+                        </motion.div>
+                        Analyzing...
+                      </>
+                    ) : (
+                      <>
+                        <GitCompare className="w-4 h-4 mr-2" />
+                        Compare Now
+                      </>
+                    )}
+                  </span>
+                </motion.button>
+              )}
+              
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setSelectedToolsForComparison([])}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                Clear All
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+      </AnimatePresence>
+      
+      {/* Loading Overlay */}
+      <AnimatePresence>
+        {isLoadingCompare && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center"
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              className="bg-white rounded-3xl p-8 shadow-2xl max-w-md text-center"
+            >
+              <div className="mb-6">
+                <motion.div
+                  className="w-20 h-20 mx-auto mb-4 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-full flex items-center justify-center"
+                  animate={{
+                    rotate: 360,
+                    scale: [1, 1.1, 1],
+                  }}
+                  transition={{
+                    rotate: { duration: 2, repeat: Infinity, ease: "linear" },
+                    scale: { duration: 1, repeat: Infinity }
+                  }}
+                >
+                  <GitCompare className="w-10 h-10 text-white" />
+                </motion.div>
+                
+                <h3 className="text-2xl font-bold mb-2 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
+                  Analyzing Tools
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  Comparing features, pricing, and capabilities...
+                </p>
+                
+                {/* Progress Bar */}
+                <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500"
+                    initial={{ width: "0%" }}
+                    animate={{ width: "100%" }}
+                    transition={{ duration: 3.5, ease: "easeInOut" }}
+                  />
+                </div>
+                
+                {/* Selected Tools Preview */}
+                <div className="flex justify-center gap-2 mt-6">
+                  {selectedToolsForComparison.slice(0, 3).map((tool, index) => (
+                    <motion.div
+                      key={tool.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.2 }}
+                      className="bg-gray-100 rounded-lg p-2"
+                    >
+                      <span className="text-2xl">{tool.logo}</span>
+                    </motion.div>
+                  ))}
+                  {selectedToolsForComparison.length > 3 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.6 }}
+                      className="bg-gray-100 rounded-lg p-2 flex items-center justify-center"
+                    >
+                      <span className="text-sm font-semibold text-gray-600">
+                        +{selectedToolsForComparison.length - 3}
+                      </span>
+                    </motion.div>
+                  )}
+                </div>
+              </div>
+              
+              <div className="flex justify-center gap-2">
+                {[0, 1, 2].map((i) => (
+                  <motion.div
+                    key={i}
+                    className="w-2 h-2 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full"
+                    animate={{
+                      scale: [1, 1.5, 1],
+                      opacity: [0.5, 1, 0.5]
+                    }}
+                    transition={{
+                      duration: 1.5,
+                      repeat: Infinity,
+                      delay: i * 0.2
+                    }}
+                  />
+                ))}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
+      {/* Compare Modal */}
+      <CompareModal
+        isOpen={isCompareModalOpen}
+        onClose={() => setIsCompareModalOpen(false)}
+        selectedTools={selectedToolsForComparison}
+        onRemoveTool={handleRemoveFromComparison}
+      />
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        defaultTab={authModalTab}
+      />
     </div>
   );
 }

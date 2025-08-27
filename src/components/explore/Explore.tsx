@@ -36,7 +36,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from '../ui/select';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 
 // Import mock data
 import { getAllTools, getCategories, searchTools, getToolsByCategory, MockTool } from '../../data/mockTools';
@@ -449,9 +449,22 @@ export function Explore({ onNavigate, className = "" }: ExploreProps) {
     
     // Add validation for onNavigate
     if (!onNavigate) {
-      console.error('Explore: onNavigate not available for tool navigation');
+      console.error('Explore: onNavigate not available for tool navigation', {
+        onNavigateType: typeof onNavigate,
+        toolId: tool.id,
+        toolName: tool.name
+      });
+      // Try to navigate using window location as fallback
+      window.location.href = `#tool-detail?tool_id=${tool.id}`;
       return;
     }
+    
+    console.log('🔍 Explore: Navigating to tool-detail', {
+      from: 'explore',
+      to: 'tool-detail',
+      toolId: tool.id,
+      toolName: tool.name
+    });
     
     // Navigate to tool detail
     onNavigate('explore', 'tool-detail', { 

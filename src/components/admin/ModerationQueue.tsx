@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+
+import { useState, useEffect } from 'react';
+import { Card, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Input } from '../ui/input';
-import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Checkbox } from '../ui/checkbox';
@@ -12,43 +12,20 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { ScrollArea } from '../ui/scroll-area';
-import { Separator } from '../ui/separator';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
-import { toast } from 'sonner@2.0.3';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
+import { toast } from 'sonner';
 import {
   LayoutGrid,
   List,
   Search,
-  Filter,
-  MoreHorizontal,
-  Eye,
   CheckCircle,
   XCircle,
   AlertCircle,
   Clock,
   User,
-  Calendar,
-  ExternalLink,
-  Download,
-  Share2,
-  Flag,
-  MessageSquare,
-  Settings,
-  ChevronRight,
-  ChevronDown,
-  ArrowUpDown,
-  SlidersHorizontal,
-  Trash2,
-  Edit,
-  Send,
-  X,
   Shield,
   Activity,
-  Image as ImageIcon,
-  Globe,
-  Star,
-  TrendingUp,
-  DollarSign
+  Send
 } from 'lucide-react';
 
 /*
@@ -511,7 +488,7 @@ export function ModerationQueue() {
                   placeholder="Search tools, submitters, or descriptions..."
                   className="pl-10"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
                 />
               </div>
               

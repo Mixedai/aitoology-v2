@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useEffect,useMemo,useRef,useState, } from 'react';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -11,7 +12,7 @@ import { Progress } from '../ui/progress';
 import { Checkbox } from '../ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Switch } from '../ui/switch';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Plus, 
@@ -54,7 +55,7 @@ import {
 } from 'lucide-react';
 
 // Import types and utilities
-import type { NavigationProps, WizardState, Workflow, Tool } from './types';
+import type { NavigationProps, WizardState, Workflow as WorkflowModel, Tool } from './types';
 import { workflowCategories, sortOptions, WIZARD_STEPS } from './constants';
 import { availableTools, mockWorkflows } from './mockData';
 import { generateNodeId, generateConnectionId, createNewNode, getStepTitle, getStepDescription } from './utils';
@@ -62,7 +63,7 @@ import { WizardStep1 } from './wizardSteps/WizardStep1';
 
 export function ToolCombinationsFrame({ onNavigate, currentScreen, selectedItem, detailView, navigationState }: NavigationProps) {
   // Core state
-  const [workflows, setWorkflows] = useState<Workflow[]>([]);
+  const [workflows, setWorkflows] = useState<WorkflowModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
@@ -435,7 +436,7 @@ export function ToolCombinationsFrame({ onNavigate, currentScreen, selectedItem,
     try {
       await new Promise(resolve => setTimeout(resolve, 3000));
       
-      const newWorkflow: Workflow = {
+      const newWorkflow: WorkflowModel = {
         id: Date.now().toString(),
         name: wizardState.data.name,
         description: wizardState.data.description,
@@ -491,7 +492,7 @@ export function ToolCombinationsFrame({ onNavigate, currentScreen, selectedItem,
   };
 
   // Handle workflow actions
-  const handleWorkflowAction = (action: string, workflow: Workflow) => {
+  const handleWorkflowAction = (action: string, workflow: WorkflowModel) => {
     switch (action) {
       case 'view':
         onNavigate?.('tool-combinations-frame', 'workflow-detail', { 
@@ -795,7 +796,7 @@ export function ToolCombinationsFrame({ onNavigate, currentScreen, selectedItem,
                         <Checkbox
                           id={difficulty}
                           checked={difficultyFilter.includes(difficulty)}
-                          onCheckedChange={(checked) => {
+                          onCheckedChange={(checked: boolean) => {
                             if (checked) {
                               setDifficultyFilter(prev => [...prev, difficulty]);
                             } else {
@@ -1136,7 +1137,7 @@ export function ToolCombinationsFrame({ onNavigate, currentScreen, selectedItem,
                                   <label className="text-sm">Category *</label>
                                   <Select 
                                     value={wizardState.data.category} 
-                                    onValueChange={(value) => updateWizardData({ category: value })}
+                                    onValueChange={(value: string) => updateWizardData({ category: value })}
                                   >
                                     <SelectTrigger>
                                       <SelectValue placeholder="Select category" />

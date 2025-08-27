@@ -36,7 +36,7 @@ export interface ComponentNavigationProps {
   isAuthenticated?: boolean;
   navigationState?: string | null;
   selectedItem?: any;
-  detailView?: boolean;
+  detailView?: boolean | "tutorial-detail" | "workflow-detail";
 }
 
 // Screen category types

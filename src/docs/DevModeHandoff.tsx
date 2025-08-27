@@ -70,7 +70,7 @@ export function DevModeHandoff() {
 
   const tailwindSpacing = [
     { class: "p-4", css: "padding: 1rem", usage: "Card padding, button padding" },
-    { class: "p-6", css: "padding: 1.5rem", css: "Card content padding" },
+    { class: "p-6", css: "padding: 1.5rem", usage: "Card content padding" },
     { class: "p-8", css: "padding: 2rem", usage: "Page container padding" },
     { class: "gap-4", css: "gap: 1rem", usage: "Grid/flex item spacing" },
     { class: "gap-6", css: "gap: 1.5rem", usage: "Section spacing" },

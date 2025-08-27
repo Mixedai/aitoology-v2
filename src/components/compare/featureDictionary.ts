@@ -1,4 +1,4 @@
-import type { FeatureDef, FeatureKey, ToolLite, ValueCell } from '@/types/compare';
+import type { FeatureDef, FeatureKey, ToolLite, ValueCell } from '../../types/compare';
 
 export const FEATURE_DICTIONARY: FeatureDef[] = [
   { key:'category',         label:'Category',          type:'string', group:'General',     sort: 10 },

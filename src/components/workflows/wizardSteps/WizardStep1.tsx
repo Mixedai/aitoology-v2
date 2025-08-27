@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Card, CardContent } from '../../ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../ui/tabs';
 import { Button } from '../../ui/button';
@@ -17,7 +17,7 @@ import {
   Users, 
   Star 
 } from 'lucide-react';
-import type { WizardState, WorkflowTemplate } from '../types';
+import type { WizardState } from '../types';
 import { enhancedWorkflowTemplates } from '../mockData';
 
 interface WizardStep1Props {
@@ -42,7 +42,7 @@ export function WizardStep1({ wizardState, updateWizardData, generateWorkflowFro
 
       <Tabs 
         value={wizardState.data.importType} 
-        onValueChange={(value) => updateWizardData({ importType: value as any })}
+        onValueChange={(value: string) => updateWizardData({ importType: value as any })}
       >
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="blank" className="gap-1">

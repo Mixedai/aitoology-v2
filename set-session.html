@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Set Session</title>
+    <style>
+        body {
+            font-family: system-ui;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        .code-block {
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quick Session Setup</h1>
+    
+    <p>This will set up a test session directly in localStorage:</p>
+    
+    <button onclick="setTestSession()">Set Test Session</button>
+    <button onclick="checkSession()">Check Current Session</button>
+    <button onclick="clearSession()">Clear Session</button>
+    
+    <div id="status"></div>
+    
+    <h3>Or run this in console at localhost:5173:</h3>
+    <div class="code-block" id="consoleCode"></div>
+
+    <script>
+        const testSession = {
+            "currentSession": {
+                "access_token": "eyJhbGciOiJIUzI1NiIsImtpZCI6InlKTys1TmsyaWtoWUpXcVAiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3RidmZ5aHRrcnZldG1jaWJhbGZiLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiJiZTE1NDZhZC0zNWNkLTQ3ZjEtOTkzMS1kZmRmNWM3ODI1YjUiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzU2MzAxNjI1LCJpYXQiOjE3NTYyOTgwMjUsImVtYWlsIjoiZGVtb0B0ZXN0LmNvbSIsInBob25lIjoiIiwiYXBwX21ldGFkYXRhIjp7InByb3ZpZGVyIjoiZW1haWwiLCJwcm92aWRlcnMiOlsiZW1haWwiXX0sInVzZXJfbWV0YWRhdGEiOnsiZW1haWxfdmVyaWZpZWQiOnRydWV9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6InBhc3N3b3JkIiwidGltZXN0YW1wIjoxNzU2Mjk4MDI1fV0sInNlc3Npb25faWQiOiI4MWVmOGVlNS1jNDM4LTRmODctYmNhMC05ZDZkMWY0MzI2ZmMiLCJpc19hbm9ueW1vdXMiOmZhbHNlfQ.hOiWTV4IiukGgimGxv6lZEK93Kvvtddoi79L9_CGpYQ",
+                "refresh_token": "ygdwthjt3zvt",
+                "expires_in": 3600,
+                "expires_at": Math.floor(Date.now() / 1000) + 3600, // 1 hour from now
+                "token_type": "bearer",
+                "user": {
+                    "id": "be1546ad-35cd-47f1-9931-dfdf5c7825b5",
+                    "aud": "authenticated",
+                    "role": "authenticated",
+                    "email": "demo@test.com",
+                    "email_confirmed_at": "2025-08-27T11:58:21.05067Z",
+                    "phone": "",
+                    "confirmed_at": "2025-08-27T11:58:21.05067Z",
+                    "last_sign_in_at": new Date().toISOString(),
+                    "app_metadata": {
+                        "provider": "email",
+                        "providers": ["email"]
+                    },
+                    "user_metadata": {
+                        "email_verified": true
+                    },
+                    "identities": [{
+                        "identity_id": "866ffe7b-2c50-4a78-bee7-799570966282",
+                        "id": "be1546ad-35cd-47f1-9931-dfdf5c7825b5",
+                        "user_id": "be1546ad-35cd-47f1-9931-dfdf5c7825b5",
+                        "identity_data": {
+                            "email": "demo@test.com",
+                            "email_verified": false,
+                            "phone_verified": false,
+                            "sub": "be1546ad-35cd-47f1-9931-dfdf5c7825b5"
+                        },
+                        "provider": "email",
+                        "last_sign_in_at": "2025-08-27T11:58:21.047559Z",
+                        "created_at": "2025-08-27T11:58:21.047617Z",
+                        "updated_at": "2025-08-27T11:58:21.047617Z",
+                        "email": "demo@test.com"
+                    }],
+                    "created_at": "2025-08-27T11:58:21.046008Z",
+                    "updated_at": new Date().toISOString(),
+                    "is_anonymous": false
+                }
+            },
+            "expiresAt": Math.floor(Date.now() / 1000) + 3600
+        };
+
+        function setTestSession() {
+            const sessionString = JSON.stringify(testSession);
+            localStorage.setItem('sb-tbvfyhtkrvetmcibalfb-auth-token', sessionString);
+            
+            document.getElementById('status').innerHTML = '<p class="success">✅ Session set! Now go to <a href="http://localhost:5173">localhost:5173</a> and refresh the page.</p>';
+            
+            // Show what was set
+            checkSession();
+        }
+
+        function checkSession() {
+            const session = localStorage.getItem('sb-tbvfyhtkrvetmcibalfb-auth-token');
+            const statusEl = document.getElementById('status');
+            
+            if (session) {
+                try {
+                    const parsed = JSON.parse(session);
+                    statusEl.innerHTML = `
+                        <p class="success">✅ Session found!</p>
+                        <p>User: ${parsed.currentSession?.user?.email || 'Unknown'}</p>
+                        <p>Expires: ${new Date(parsed.expiresAt * 1000).toLocaleString()}</p>
+                    `;
+                } catch (e) {
+                    statusEl.innerHTML = '<p>Session exists but couldn\'t parse it</p>';
+                }
+            } else {
+                statusEl.innerHTML = '<p>❌ No session found in localStorage</p>';
+            }
+        }
+
+        function clearSession() {
+            localStorage.removeItem('sb-tbvfyhtkrvetmcibalfb-auth-token');
+            document.getElementById('status').innerHTML = '<p>Session cleared</p>';
+        }
+
+        // Generate console code
+        const consoleCode = `// Copy and paste this in the console at localhost:5173
+const session = ${JSON.stringify(testSession, null, 2)};
+localStorage.setItem('sb-tbvfyhtkrvetmcibalfb-auth-token', JSON.stringify(session));
+location.reload();`;
+
+        document.getElementById('consoleCode').textContent = consoleCode;
+        
+        // Check on load
+        checkSession();
+    </script>
+</body>
+</html>
