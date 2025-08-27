@@ -710,32 +710,12 @@ function AppContent() {
         navigationLogger.logNavigation(from, 'grammarly-page', params);
         handleNavigation('grammarly-page', null, params);
       },
-
-      // Compare Page Navigation
-      'compare': (from, params) => {
-        console.log('🔍 Navigating to compare page with params:', params);
-        navigationLogger.logNavigation(from, 'compare', params);
-        
-        // If tools are provided, add them to the URL
-        if (params && params.tools) {
-          const urlParams = new URLSearchParams();
-          urlParams.set('tools', params.tools);
-          window.history.pushState({}, '', `#compare?${urlParams.toString()}`);
-        }
-        
-        handleNavigation('compare', null, params);
-      },
       'figma-ai-page': (from, params) => {
         navigationLogger.logNavigation(from, 'figma-ai-page', params);
         handleNavigation('figma-ai-page', null, params);
       },
 
       // Core page navigation
-      'explore-frame': (from, params) => {
-        navigationLogger.logNavigation(from, 'explore-frame', params);
-        handleNavigation('explore-frame', null, params);
-      },
-      
       'tool-detail': (from, params) => {
         console.log('🔍 App.tsx tool-detail navigation START:', {
           from,
