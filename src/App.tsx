@@ -650,9 +650,12 @@ function AppContent() {
     }
 
     // ENHANCED: Additional validation for fromScreen
+    const validatedFromScreen = (!fromScreen || typeof fromScreen !== 'string') 
+      ? (currentScreen || 'modern-home')
+      : fromScreen;
+    
     if (!fromScreen || typeof fromScreen !== 'string') {
       console.warn(`⚠️ Invalid fromScreen parameter: ${fromScreen}, using current screen instead`);
-      fromScreen = currentScreen;
     }
 
     // ENHANCED: Structured navigation routing with validation
@@ -941,11 +944,11 @@ function AppContent() {
     const handler = navigationMap[sanitizedToScreen];
     if (handler) {
       try {
-        handler(fromScreen, params);
+        handler(validatedFromScreen, params);
       } catch (error) {
         const navError = navigationLogger.createError(
           'handler_error',
-          fromScreen,
+          validatedFromScreen,
           sanitizedToScreen,
           error instanceof Error ? error : new Error('Unknown handler error'),
           params
@@ -954,7 +957,7 @@ function AppContent() {
         navigationLogger.logError(navError);
         
         // Safe fallback
-        console.error(`❌ Navigation handler failed for ${fromScreen} → ${sanitizedToScreen}`, error);
+        console.error(`❌ Navigation handler failed for ${validatedFromScreen} → ${sanitizedToScreen}`, error);
         navigationLogger.logNavigation('error_fallback', 'explore-frame', { 
           originalTarget: sanitizedToScreen, 
           error: navError 
@@ -968,12 +971,12 @@ function AppContent() {
                           errorScreens.find(screen => screen.id === sanitizedToScreen);
       
       if (validScreen) {
-        navigationLogger.logNavigation(fromScreen, sanitizedToScreen, params);
+        navigationLogger.logNavigation(validatedFromScreen, sanitizedToScreen, params);
         handleNavigation(sanitizedToScreen);
       } else {
         const error = navigationLogger.createError(
           'unknown_target',
-          fromScreen,
+          validatedFromScreen,
           sanitizedToScreen,
           new Error(`Unknown navigation target: ${sanitizedToScreen}`),
           params
@@ -981,7 +984,7 @@ function AppContent() {
         
         navigationLogger.logError(error);
         navigationLogger.logWarning(
-          fromScreen,
+          validatedFromScreen,
           sanitizedToScreen,
           `Unknown navigation target. Available targets: ${Object.keys(navigationMap).concat(validTargets).join(', ')}`,
           params
