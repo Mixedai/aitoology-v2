@@ -49,7 +49,7 @@ export function AboutUsBlock({ variant = "default", className = "" }: AboutUsBlo
             <div>
               <div className="aspect-video bg-muted rounded-xl overflow-hidden">
                 <ImageWithFallback
-                  src="/api/placeholder/600/400"
+                  src="https://images.unsplash.com/photo-1556761175-4b46a572b786?w=600&h=400&fit=crop"
                   alt="About our company"
                   className="w-full h-full object-cover"
                 />
@@ -245,7 +245,7 @@ export function AboutUsBlock({ variant = "default", className = "" }: AboutUsBlo
             <div className="relative">
               <div className="aspect-square bg-gradient-to-br from-primary/20 to-secondary/20 rounded-2xl overflow-hidden">
                 <ImageWithFallback
-                  src="/api/placeholder/500/500"
+                  src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=500&h=500&fit=crop"
                   alt="About our company"
                   className="w-full h-full object-cover"
                 />

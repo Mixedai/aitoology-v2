@@ -98,7 +98,7 @@ const RelatedArticleCard = ({
         {/* Image */}
         <div className="h-40 relative overflow-hidden">
           <ImageWithFallback
-            src={article.image || '/api/placeholder/400/200'}
+            src={article.image || 'https://placehold.co/400x200/e2e8f0/475569?text=AI+News'}
             alt={article.title}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
@@ -265,7 +265,7 @@ export function NewsDetailFrame({
     category: 'Breaking',
     author: {
       name: 'Sarah Chen',
-      avatar: '/api/placeholder/40/40',
+      avatar: 'https://ui-avatars.com/api/?size=40&background=6366f1&color=fff&name=User',
       bio: 'Senior AI Researcher and Technology Journalist covering artificial intelligence breakthroughs and industry developments.'
     },
     publishedAt: '2 hours ago',
@@ -273,7 +273,7 @@ export function NewsDetailFrame({
     views: '12.5K',
     trending: true,
     tags: ['OpenAI', 'GPT-5', 'LLM', 'AI Research'],
-    image: '/api/placeholder/800/400',
+    image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=400&fit=crop',
     content: `
       <p>In a groundbreaking announcement that has sent ripples through the tech industry, OpenAI has officially unveiled GPT-5, the next iteration of their revolutionary language model series. This new model represents a significant leap forward in artificial intelligence capabilities, promising to address many of the limitations present in previous versions while introducing entirely new functionalities.</p>
 
@@ -318,7 +318,7 @@ export function NewsDetailFrame({
       category: 'Product Updates',
       publishedAt: '6 hours ago',
       readTime: '4 min read',
-      image: '/api/placeholder/400/200'
+      image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=200&fit=crop'
     },
     {
       id: 'ai-ethics-framework',
@@ -327,7 +327,7 @@ export function NewsDetailFrame({
       category: 'AI Research',
       publishedAt: '1 day ago',
       readTime: '7 min read',
-      image: '/api/placeholder/400/200'
+      image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=200&fit=crop'
     },
     {
       id: 'github-copilot-enterprise',
@@ -336,7 +336,7 @@ export function NewsDetailFrame({
       category: 'Product Updates',
       publishedAt: '2 days ago',
       readTime: '6 min read',
-      image: '/api/placeholder/400/200'
+      image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=200&fit=crop'
     }
   ];
 
@@ -582,7 +582,7 @@ export function NewsDetailFrame({
               {/* Featured Image */}
               <div className="relative rounded-2xl overflow-hidden">
                 <ImageWithFallback
-                  src={article.image || '/api/placeholder/800/400'}
+                  src={article.image || 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=400&fit=crop'}
                   alt={article.title}
                   className="w-full h-64 md:h-80 lg:h-96 object-cover"
                 />

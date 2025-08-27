@@ -106,7 +106,7 @@ const NewsCard = ({
         {/* Image/Header - Smaller */}
         <div className={`relative overflow-hidden ${featured ? 'h-40 lg:h-48' : 'h-32'}`}>
           <ImageWithFallback
-            src={article.image || '/api/placeholder/600/400'}
+            src={article.image || 'https://placehold.co/600x400/e2e8f0/475569?text=AI+News'}
             alt={article.title}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
@@ -353,14 +353,14 @@ export function NewsFrame({ onNavigate, className = "" }: NewsFrameProps) {
       category: 'Breaking',
       author: {
         name: 'Sarah Chen',
-        avatar: '/api/placeholder/40/40'
+        avatar: 'https://ui-avatars.com/api/?size=40&background=6366f1&color=fff&name=User'
       },
       publishedAt: '2 hours ago',
       readTime: '5 min read',
       views: '12.5K',
       trending: true,
       tags: ['OpenAI', 'GPT-5', 'LLM', 'AI Research'],
-      image: '/api/placeholder/800/400'
+      image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=400&fit=crop'
     },
     {
       id: 'midjourney-v7-features',
@@ -369,14 +369,14 @@ export function NewsFrame({ onNavigate, className = "" }: NewsFrameProps) {
       category: 'Product Updates',
       author: {
         name: 'Marcus Rodriguez',
-        avatar: '/api/placeholder/40/40'
+        avatar: 'https://ui-avatars.com/api/?size=40&background=6366f1&color=fff&name=User'
       },
       publishedAt: '6 hours ago',
       readTime: '4 min read',
       views: '8.3K',
       trending: true,
       tags: ['Midjourney', '3D Generation', 'AI Art'],
-      image: '/api/placeholder/800/400'
+      image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=400&fit=crop'
     },
     {
       id: 'ai-ethics-framework',
@@ -385,14 +385,14 @@ export function NewsFrame({ onNavigate, className = "" }: NewsFrameProps) {
       category: 'AI Research',
       author: {
         name: 'Dr. Emily Watson',
-        avatar: '/api/placeholder/40/40'
+        avatar: 'https://ui-avatars.com/api/?size=40&background=6366f1&color=fff&name=User'
       },
       publishedAt: '1 day ago',
       readTime: '7 min read',
       views: '15.2K',
       trending: false,
       tags: ['AI Ethics', 'Industry', 'Governance'],
-      image: '/api/placeholder/800/400'
+      image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=400&fit=crop'
     },
     {
       id: 'github-copilot-enterprise',
@@ -401,14 +401,14 @@ export function NewsFrame({ onNavigate, className = "" }: NewsFrameProps) {
       category: 'Product Updates',
       author: {
         name: 'David Kim',
-        avatar: '/api/placeholder/40/40'
+        avatar: 'https://ui-avatars.com/api/?size=40&background=6366f1&color=fff&name=User'
       },
       publishedAt: '2 days ago',
       readTime: '6 min read',
       views: '9.7K',
       trending: false,
       tags: ['GitHub Copilot', 'Enterprise', 'Coding'],
-      image: '/api/placeholder/800/400'
+      image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=400&fit=crop'
     },
     {
       id: 'ai-market-trends-2024',
@@ -417,14 +417,14 @@ export function NewsFrame({ onNavigate, className = "" }: NewsFrameProps) {
       category: 'Industry Analysis',
       author: {
         name: 'Lisa Zhang',
-        avatar: '/api/placeholder/40/40'
+        avatar: 'https://ui-avatars.com/api/?size=40&background=6366f1&color=fff&name=User'
       },
       publishedAt: '3 days ago',
       readTime: '10 min read',
       views: '22.1K',
       trending: false,
       tags: ['Market Trends', 'Investment', 'Predictions'],
-      image: '/api/placeholder/800/400'
+      image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=400&fit=crop'
     },
     {
       id: 'claude-3-benchmarks',
@@ -433,14 +433,14 @@ export function NewsFrame({ onNavigate, className = "" }: NewsFrameProps) {
       category: 'AI Research',
       author: {
         name: 'Alex Johnson',
-        avatar: '/api/placeholder/40/40'
+        avatar: 'https://ui-avatars.com/api/?size=40&background=6366f1&color=fff&name=User'
       },
       publishedAt: '4 days ago',
       readTime: '8 min read',
       views: '11.4K',
       trending: false,
       tags: ['Claude', 'AI Safety', 'Benchmarks'],
-      image: '/api/placeholder/800/400'
+      image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=400&fit=crop'
     }
   ];
 

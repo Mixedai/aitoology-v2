@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
@@ -25,7 +25,10 @@ import {
   User,
   Shield,
   Activity,
-  Send
+  Send,
+  Trash2,
+  Eye,
+  ExternalLink
 } from 'lucide-react';
 
 /*
@@ -118,12 +121,12 @@ const mockSubmissions: ToolSubmission[] = [
     category: 'Writing',
     website: 'https://aiwriterpro.com',
     logo: '✍️',
-    screenshots: ['/api/placeholder/800/600', '/api/placeholder/800/600'],
+    screenshots: ['https://placehold.co/800x600/e2e8f0/475569?text=Screenshot+1', 'https://placehold.co/800x600/e2e8f0/475569?text=Screenshot+2'],
     submittedBy: {
       id: 'user1',
       name: 'Sarah Chen',
       email: 'sarah@aiwriterpro.com',
-      avatar: '/api/placeholder/32/32'
+      avatar: 'https://ui-avatars.com/api/?size=32&background=6366f1&color=fff&name=User'
     },
     submittedAt: new Date('2024-01-10T10:30:00'),
     status: 'pending',
@@ -144,7 +147,7 @@ const mockSubmissions: ToolSubmission[] = [
     category: 'Analytics',
     website: 'https://datavizstudio.com',
     logo: '📊',
-    screenshots: ['/api/placeholder/800/600'],
+    screenshots: ['https://placehold.co/800x600/e2e8f0/475569?text=Screenshot'],
     submittedBy: {
       id: 'user2',
       name: 'Mike Rodriguez',
@@ -174,7 +177,7 @@ const mockSubmissions: ToolSubmission[] = [
     category: 'Development',
     website: 'https://codeassist.dev',
     logo: '🤖',
-    screenshots: ['/api/placeholder/800/600', '/api/placeholder/800/600', '/api/placeholder/800/600'],
+    screenshots: ['https://placehold.co/800x600/e2e8f0/475569?text=Screenshot+1', 'https://placehold.co/800x600/e2e8f0/475569?text=Screenshot+2', 'https://placehold.co/800x600/e2e8f0/475569?text=Screenshot+3'],
     submittedBy: {
       id: 'user3',
       name: 'Alex Thompson',
@@ -203,7 +206,7 @@ const mockSubmissions: ToolSubmission[] = [
     category: 'Design',
     website: 'https://designgenie.ai',
     logo: '🎨',
-    screenshots: ['/api/placeholder/800/600'],
+    screenshots: ['https://placehold.co/800x600/e2e8f0/475569?text=Screenshot'],
     submittedBy: {
       id: 'user4',
       name: 'Lisa Wang',
@@ -229,7 +232,7 @@ const mockActivityLog: ActivityLogEntry[] = [
     type: 'status_change',
     title: 'Tool Approved',
     description: 'DataViz Studio was approved and published',
-    user: { name: 'John Admin', avatar: '/api/placeholder/32/32' },
+    user: { name: 'John Admin', avatar: 'https://ui-avatars.com/api/?size=32&background=6366f1&color=fff&name=User' },
     timestamp: new Date('2024-01-09T16:20:00'),
     metadata: { toolId: '2', status: 'approved' }
   },

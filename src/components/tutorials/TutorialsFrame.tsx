@@ -875,7 +875,7 @@ export function TutorialsFrame({
       gradient: 'from-emerald-400 to-cyan-500',
       author: {
         name: 'Sarah Chen',
-        avatar: '/api/placeholder/40/40'
+        avatar: 'https://ui-avatars.com/api/?size=40&background=6366f1&color=fff&name=User'
       },
       rating: '4.8',
       views: '12.5K',
@@ -893,7 +893,7 @@ export function TutorialsFrame({
       gradient: 'from-purple-400 to-pink-500',
       author: {
         name: 'Marcus Rodriguez',
-        avatar: '/api/placeholder/40/40'
+        avatar: 'https://ui-avatars.com/api/?size=40&background=6366f1&color=fff&name=User'
       },
       rating: '4.9',
       views: '8.3K',
@@ -911,7 +911,7 @@ export function TutorialsFrame({
       gradient: 'from-slate-400 to-slate-600',
       author: {
         name: 'Emily Watson',
-        avatar: '/api/placeholder/40/40'
+        avatar: 'https://ui-avatars.com/api/?size=40&background=6366f1&color=fff&name=User'
       },
       rating: '4.7',
       views: '15.2K',
@@ -929,7 +929,7 @@ export function TutorialsFrame({
       gradient: 'from-orange-400 to-red-500',
       author: {
         name: 'David Kim',
-        avatar: '/api/placeholder/40/40'
+        avatar: 'https://ui-avatars.com/api/?size=40&background=6366f1&color=fff&name=User'
       },
       rating: '4.6',
       views: '6.7K',
@@ -947,7 +947,7 @@ export function TutorialsFrame({
       gradient: 'from-blue-400 to-indigo-500',
       author: {
         name: 'Lisa Zhang',
-        avatar: '/api/placeholder/40/40'
+        avatar: 'https://ui-avatars.com/api/?size=40&background=6366f1&color=fff&name=User'
       },
       rating: '4.9',
       views: '9.1K',
@@ -965,7 +965,7 @@ export function TutorialsFrame({
       gradient: 'from-green-400 to-blue-500',
       author: {
         name: 'Alex Johnson',
-        avatar: '/api/placeholder/40/40'
+        avatar: 'https://ui-avatars.com/api/?size=40&background=6366f1&color=fff&name=User'
       },
       rating: '4.8',
       views: '4.5K',

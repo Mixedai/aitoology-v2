@@ -244,7 +244,7 @@ export function ToolDetail({ onNavigate, params, selectedItem, className = "" }:
     {
       name: 'Sarah Chen',
       role: 'Product Manager',
-      avatar: '/api/placeholder/40/40',
+      avatar: 'https://ui-avatars.com/api/?size=40&background=6366f1&color=fff&name=User',
       rating: 5,
       text: 'ChatGPT-4 has revolutionized how I handle daily tasks. The reasoning capabilities are incredible.',
       date: '2 weeks ago'
@@ -252,7 +252,7 @@ export function ToolDetail({ onNavigate, params, selectedItem, className = "" }:
     {
       name: 'Marcus Rodriguez',
       role: 'Software Developer',
-      avatar: '/api/placeholder/40/40',
+      avatar: 'https://ui-avatars.com/api/?size=40&background=6366f1&color=fff&name=User',
       rating: 5,
       text: 'Best coding assistant I\'ve ever used. Helps me debug complex issues in minutes.',
       date: '1 month ago'
@@ -260,7 +260,7 @@ export function ToolDetail({ onNavigate, params, selectedItem, className = "" }:
     {
       name: 'Emily Watson',
       role: 'Content Creator',
-      avatar: '/api/placeholder/40/40',
+      avatar: 'https://ui-avatars.com/api/?size=40&background=6366f1&color=fff&name=User',
       rating: 4,
       text: 'Great for creative writing projects. Sometimes needs a bit of guidance but overall excellent.',
       date: '3 weeks ago'
