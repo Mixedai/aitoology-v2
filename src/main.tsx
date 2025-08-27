@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 import React from "react";
 import "./index.css";
+import App from "./App";
 import { setupGlobalErrorHandlers, cleanupBrowserExtensions } from "./utils/errorHandler";
 
 // Set up global error handlers before anything else
@@ -8,9 +9,6 @@ setupGlobalErrorHandlers();
 
 // Clean up browser extension artifacts
 cleanupBrowserExtensions();
-
-// Try to load the main App with error boundary
-const App = React.lazy(() => import("./App.tsx"));
 
 function ErrorFallback({ error }: { error: Error }) {
   return (
@@ -70,12 +68,6 @@ if (!root) {
 
 root.render(
   <ErrorBoundary>
-    <React.Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-2xl">Loading...</div>
-      </div>
-    }>
-      <App />
-    </React.Suspense>
+    <App />
   </ErrorBoundary>
 );
