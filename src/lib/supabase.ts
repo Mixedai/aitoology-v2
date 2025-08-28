@@ -1,15 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Supabase client configuration - provide defaults for missing env vars
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://tbvfyhtkrvetmcibalfb.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRidmZ5aHRrcnZldG1jaWJhbGZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYyMzg3MzYsImV4cCI6MjA3MTgxNDczNn0.depr2savD-hvx6f18aZJLfvg7oWBLBxlDu4q9tmkg3w';
+const supabaseUrl = (import.meta.env.VITE_SUPABASE_URL || 'https://tbvfyhtkrvetmcibalfb.supabase.co').trim();
+const supabaseAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRidmZ5aHRrcnZldG1jaWJhbGZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYyMzg3MzYsImV4cCI6MjA3MTgxNDczNn0.depr2savD-hvx6f18aZJLfvg7oWBLBxlDu4q9tmkg3w').trim();
 
-// Always log configuration to debug
+// Log configuration safely (redacted)
 console.log('🔧 Supabase Configuration:', {
   url: supabaseUrl || 'NOT SET',
   hasKey: !!supabaseAnonKey,
   keyLength: supabaseAnonKey.length,
-  env: import.meta.env
+  keyPreview: supabaseAnonKey ? `${supabaseAnonKey.substring(0, 6)}...${supabaseAnonKey.substring(supabaseAnonKey.length - 4)}` : 'NOT SET'
 });
 
 // Validate configuration

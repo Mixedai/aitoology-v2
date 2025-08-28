@@ -49,6 +49,7 @@ import { FilterChips } from './FilterChips';
 import { CompareModal } from '../compare/CompareModal';
 import { AuthModal } from '../auth/AuthModal';
 import { useAuth } from '@/contexts/AuthContext';
+import { UserMenu } from '../navigation/UserMenu';
 import { toast } from 'sonner';
 import { useSupabaseTools } from '@/hooks/useSupabaseTools';
 import { useSupabaseCategories } from '@/hooks/useSupabaseCategories';
@@ -807,57 +808,89 @@ export function ExploreFrame({ onNavigate, className = "" }: ExploreFrameProps) 
         ))}
       </motion.div>
 
+      {/* HEADER WITH NAVIGATION */}
+      <header className="fixed top-0 left-0 right-0 z-50">
+        <div className="container mx-auto px-6">
+          <div className="flex items-center justify-between h-20">
+            {/* Logo with Glass Effect */}
+            <button
+              onClick={() => onNavigate?.('explore-frame', 'modern-home')}
+              className="group flex items-center gap-3 transition-transform hover:scale-105 bg-white/10 backdrop-blur-md px-4 py-2 rounded-2xl"
+            >
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur-xl opacity-70 group-hover:opacity-100 transition-opacity" />
+                <div className="relative w-12 h-12 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-2xl transition-shadow">
+                  <span className="text-white text-2xl">🧠</span>
+                </div>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-2xl font-black bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent drop-shadow-sm">
+                  AI Toologist
+                </span>
+                <span className="text-xs text-gray-600 font-medium">Discover AI Tools</span>
+              </div>
+            </button>
+
+            {/* Navigation Links with Enhanced Design */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => onNavigate?.('explore-frame', 'modern-home')}
+                className={`relative px-6 py-3 rounded-2xl font-semibold transition-all duration-300 backdrop-blur-md text-gray-700 hover:text-gray-900 bg-white/30 hover:bg-white/50`}
+              >
+                <span className="relative flex items-center gap-2 drop-shadow-sm">
+                  🏠 Home
+                </span>
+              </button>
+
+              <button
+                className={`relative px-6 py-3 rounded-2xl font-semibold transition-all duration-300 backdrop-blur-md text-white shadow-2xl`}
+                disabled
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl shadow-lg animate-pulse" />
+                <span className="relative flex items-center gap-2 drop-shadow-sm">
+                  🤖 AI Tools
+                  <span className="px-2 py-0.5 text-xs bg-red-500 text-white rounded-full animate-bounce">
+                    New
+                  </span>
+                </span>
+              </button>
+
+              <button
+                onClick={() => onNavigate?.('explore-frame', 'tutorials-frame')}
+                className={`relative px-6 py-3 rounded-2xl font-semibold transition-all duration-300 backdrop-blur-md text-gray-700 hover:text-gray-900 bg-white/30 hover:bg-white/50`}
+              >
+                <span className="relative flex items-center gap-2 drop-shadow-sm">
+                  📚 Learning
+                </span>
+              </button>
+
+              <button
+                onClick={() => onNavigate?.('explore-frame', 'news')}
+                className={`relative px-6 py-3 rounded-2xl font-semibold transition-all duration-300 backdrop-blur-md text-gray-700 hover:text-gray-900 bg-white/30 hover:bg-white/50`}
+              >
+                <span className="relative flex items-center gap-2 drop-shadow-sm">
+                  📰 News
+                </span>
+              </button>
+
+              <button
+                onClick={() => onNavigate?.('explore-frame', 'wallet')}
+                className={`relative px-6 py-3 rounded-2xl font-semibold transition-all duration-300 backdrop-blur-md text-gray-700 hover:text-gray-900 bg-white/30 hover:bg-white/50`}
+              >
+                <span className="relative flex items-center gap-2 drop-shadow-sm">
+                  💳 Wallet
+                </span>
+              </button>
+            </div>
+
+            {/* User Menu */}
+            <UserMenu onNavigate={onNavigate} />
+          </div>
+        </div>
+      </header>
+
       {/* MAIN CONTENT */}
       <div className="relative z-10 pt-20">
-        {/* Auth Buttons */}
-        <div className="absolute top-6 right-6 z-20 flex items-center gap-3">
-          {authLoading ? (
-            <div className="px-4 py-2 bg-white/90 backdrop-blur-md rounded-full shadow-lg">
-              <span className="text-gray-600 text-sm">Loading...</span>
-            </div>
-          ) : user ? (
-            <>
-              <div className="flex items-center gap-2 px-4 py-2 bg-white/90 backdrop-blur-md rounded-full shadow-lg">
-                <Users className="w-4 h-4 text-purple-600" />
-                <span className="text-gray-800 font-medium text-sm">{user.email?.split('@')[0]}</span>
-              </div>
-              <Button
-                onClick={() => signOut()}
-                variant="outline"
-                className="bg-white/90 backdrop-blur-md hover:bg-white shadow-lg"
-                size="sm"
-              >
-                Sign Out
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                onClick={() => {
-                  setAuthModalTab('login');
-                  setIsAuthModalOpen(true);
-                }}
-                variant="ghost"
-                className="text-gray-700 hover:bg-white/50 backdrop-blur-md"
-                size="sm"
-              >
-                <LogIn className="w-4 h-4 mr-2" />
-                Sign In
-              </Button>
-              <Button
-                onClick={() => {
-                  setAuthModalTab('register');
-                  setIsAuthModalOpen(true);
-                }}
-                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-700 hover:to-indigo-700 shadow-lg"
-                size="sm"
-              >
-                <UserPlus className="w-4 h-4 mr-2" />
-                Get Started
-              </Button>
-            </>
-          )}
-        </div>
 
         {/* HERO SECTION */}
         <section 

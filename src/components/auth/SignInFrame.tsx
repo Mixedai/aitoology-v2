@@ -1,5 +1,5 @@
 import { useEffect,useRef,useState, } from 'react';
-
+import { useAuth } from '@/contexts/AuthContext';
 import { motion, useInView } from 'framer-motion';
 import { 
   Mail, 
@@ -34,6 +34,7 @@ interface SignInFrameProps {
 }
 
 export function SignInFrame({ onNavigate, currentScreen = 'sign-in' }: SignInFrameProps) {
+  const { signIn, signInWithGoogle, signInWithGithub, user } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -61,6 +62,16 @@ export function SignInFrame({ onNavigate, currentScreen = 'sign-in' }: SignInFra
     return () => clearTimeout(timer);
   }, []);
 
+  // Check if user is already authenticated
+  useEffect(() => {
+    if (user) {
+      console.log('🔓 SignInFrame: User already authenticated, navigating to home');
+      onNavigate?.(currentScreen, 'modern-home', { 
+        authenticated: true
+      });
+    }
+  }, [user, currentScreen, onNavigate]);
+
   // Form validation with detailed error messages
   const validateForm = () => {
     if (!formData.email.trim()) {
@@ -86,7 +97,7 @@ export function SignInFrame({ onNavigate, currentScreen = 'sign-in' }: SignInFra
     return true;
   };
 
-  // Enhanced form submission with realistic loading
+  // Enhanced form submission with real Supabase authentication
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -97,25 +108,21 @@ export function SignInFrame({ onNavigate, currentScreen = 'sign-in' }: SignInFra
     setLoadingAction('email');
     
     try {
-      // Simulate authentication
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      console.log('🔐 SignInFrame: Starting sign in');
       
-      // Demo credentials for testing
-      if (formData.email === 'test@example.com' && formData.password === 'password') {
-        onNavigate?.(currentScreen, 'modern-home', { 
-          user: { 
-            email: formData.email,
-            name: 'Test User',
-            avatar: null
-          },
-          authenticated: true,
-          loginMethod: 'email'
-        });
-      } else {
-        throw new Error('Invalid credentials');
-      }
-    } catch (error) {
-      setError('Invalid email or password. Please check your credentials and try again.');
+      // Use real Supabase authentication
+      await signIn(formData.email, formData.password);
+      
+      console.log('✅ SignInFrame: Sign in successful');
+      
+      // Navigate to home after successful login
+      onNavigate?.(currentScreen, 'modern-home', { 
+        authenticated: true,
+        loginMethod: 'email'
+      });
+    } catch (error: any) {
+      console.error('❌ SignInFrame: Sign in error:', error.message);
+      setError(error.message || 'Invalid email or password. Please check your credentials and try again.');
       passwordRef.current?.focus();
       passwordRef.current?.select();
     } finally {
@@ -124,28 +131,27 @@ export function SignInFrame({ onNavigate, currentScreen = 'sign-in' }: SignInFra
     }
   };
 
-  // OAuth sign in handlers
+  // OAuth sign in handlers with real Supabase
   const handleOAuthSignIn = async (provider: 'google' | 'github') => {
     setError(null);
     setLoadingAction(provider);
     
     try {
-      // Simulate OAuth flow
-      await new Promise(resolve => setTimeout(resolve, 2500));
+      console.log(`🔐 SignInFrame: Starting OAuth sign in with ${provider}`);
       
-      onNavigate?.(currentScreen, 'modern-home', { 
-        user: { 
-          provider,
-          email: `user@${provider}.com`,
-          name: `${provider} User`,
-          avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${provider}`
-        },
-        authenticated: true,
-        loginMethod: provider
-      });
-    } catch (error) {
+      // Use real Supabase OAuth
+      if (provider === 'google') {
+        await signInWithGoogle();
+      } else {
+        await signInWithGithub();
+      }
+      
+      console.log(`✅ SignInFrame: OAuth ${provider} sign in initiated`);
+      
+      // OAuth will redirect, no need to manually navigate
+    } catch (error: any) {
+      console.error(`❌ SignInFrame: OAuth ${provider} error:`, error);
       setError(`Unable to sign in with ${provider === 'github' ? 'GitHub' : 'Google'}. Please try again.`);
-    } finally {
       setLoadingAction(null);
     }
   };

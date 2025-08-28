@@ -43,7 +43,6 @@ import {
   ChevronDown
 } from "lucide-react";
 import { motion, useInView, AnimatePresence, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
-import { MouseFollowingEyes } from "./MouseFollowingEyes";
 
 interface AIToologistHomeProps {
   onNavigate?: (fromScreen: string, toScreen: string, params?: any) => void;
@@ -515,11 +514,11 @@ export function AIToologistHome({ onNavigate }: AIToologistHomeProps) {
                   variants={staggerItem}
                   className="flex justify-center"
                 >
-                  <MouseFollowingEyes 
-                    size="lg"
-                    animated={true}
-                    className="hover:scale-110 transition-transform duration-300"
-                  />
+                  {/* Eyes animation removed - component was deleted during cleanup */}
+                  <div className="flex items-center justify-center gap-8">
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 animate-pulse hover:scale-110 transition-transform duration-300" />
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 animate-pulse hover:scale-110 transition-transform duration-300" />
+                  </div>
                 </motion.div>
 
                 <motion.div

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 import { RealtimeChannel, RealtimePostgresChangesPayload } from '@supabase/supabase-js';
-import { Tool, Review } from '@/lib/supabase';
+import { Tool, Review } from '@/lib/supabaseClient';
 import { toast } from 'sonner';
 
 // Hook for real-time tool updates

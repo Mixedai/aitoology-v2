@@ -72,7 +72,7 @@ import { Explore } from './components/explore/Explore';
 import { ExploreFrame } from './components/explore/ExploreFrame';
 import { ToolDetail } from './components/tool-detail/ToolDetail';
 import ComparePage from './components/compare/ComparePage';
-import { ToolWallet } from './components/tool-wallet/ToolWallet';
+import { ModernDashboard } from './components/tool-wallet/ModernDashboard';
 import { SubmitTool } from './components/submit-tool/SubmitTool';
 import { AdminPanel } from './components/admin/AdminPanel';
 import { ModerationQueue } from './components/admin/ModerationQueue';
@@ -246,7 +246,7 @@ const screens = [
     title: 'Tool Wallet',
     description: 'Subscription tracking and spending analytics with Supabase CRUD operations. Dashboard and billing management. List: SELECT * FROM subscriptions WHERE user_id = auth.uid() ORDER BY created_at DESC. Create: INSERT INTO subscriptions (tool_id, plan, cycle, amount, next_renewal) VALUES (...). Update: UPDATE subscriptions SET status = $1, next_renewal = $2 WHERE id = $3 AND user_id = auth.uid(). Charts: SELECT DATE_TRUNC(\'month\', created_at) as month, SUM(amount) FROM subscriptions GROUP BY month. RLS: Only owner can read/write their subscriptions. i18n keys: wallet.title, wallet.subscriptions, wallet.analytics, wallet.add_subscription. Connects to: Tool Detail, Submit Tool, Browse Tools. Keyboard shortcuts: ⌘K for Command Palette, Tab for navigation, Enter to edit subscriptions',
     icon: Wallet,
-    component: ToolWallet,
+    component: ModernDashboard,
     category: 'User Features'
   },
   {
@@ -1043,167 +1043,192 @@ function AppContent() {
   }
 
   // Individual Screen View with Global Navbar
+  // Check if current screen has its own navigation
+  const screensWithOwnNavigation = ['modern-home', 'explore-frame'];
+  const shouldShowGlobalNav = !screensWithOwnNavigation.includes(currentScreen);
+  
   return (
     <>
       <Toaster position="bottom-right" />
       <div id="app-root" className="relative min-h-screen">
-      {/* Enhanced Modern Navbar - Transparent */}
-      <nav className="fixed top-0 left-0 right-0 z-50">
-        <div className="container mx-auto px-6">
-          <div className="flex items-center justify-between h-20">
-            {/* Logo with Glass Effect */}
-            <button
-              onClick={() => handleNavigation('modern-home')}
-              className="group flex items-center gap-3 transition-transform hover:scale-105 bg-white/10 backdrop-blur-md px-4 py-2 rounded-2xl"
-            >
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur-xl opacity-70 group-hover:opacity-100 transition-opacity" />
-                <div className="relative w-12 h-12 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-2xl transition-shadow">
-                  <span className="text-white text-2xl">🧠</span>
-                </div>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-2xl font-black bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent drop-shadow-sm">
-                  AI Toologist
-                </span>
-                <span className="text-xs text-gray-600 font-medium">Discover AI Tools</span>
-              </div>
-            </button>
+      {/* Only show global navbar for screens that don't have their own navigation */}
+      {shouldShowGlobalNav && (
+        <>
+          {/* Enhanced Modern Navbar - Transparent */}
+          <nav className="fixed top-0 left-0 right-0 z-50">
+            <div className="container mx-auto px-6">
+              <div className="flex items-center justify-between h-20">
+                {/* Logo with Glass Effect */}
+                <button
+                  onClick={() => handleNavigation('modern-home')}
+                  className="group flex items-center gap-3 transition-transform hover:scale-105 bg-white/10 backdrop-blur-md px-4 py-2 rounded-2xl"
+                >
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur-xl opacity-70 group-hover:opacity-100 transition-opacity" />
+                    <div className="relative w-12 h-12 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-2xl transition-shadow">
+                      <span className="text-white text-2xl">🧠</span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-2xl font-black bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent drop-shadow-sm">
+                      AI Toologist
+                    </span>
+                    <span className="text-xs text-gray-600 font-medium">Discover AI Tools</span>
+                  </div>
+                </button>
 
-            {/* Navigation Links with Enhanced Design */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => handleNavigation('modern-home')}
-                className={`relative px-6 py-3 rounded-2xl font-semibold transition-all duration-300 backdrop-blur-md ${
-                  currentScreen === 'modern-home' 
-                    ? 'text-white shadow-2xl' 
-                    : 'text-gray-700 hover:text-gray-900 bg-white/30 hover:bg-white/50'
-                }`}
-              >
-                {currentScreen === 'modern-home' && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-lg animate-pulse" />
-                )}
-                <span className="relative flex items-center gap-2 drop-shadow-sm">
-                  🏠 Home
-                </span>
-              </button>
-
-              <button
-                onClick={() => handleNavigation('explore-frame')}
-                className={`relative px-6 py-3 rounded-2xl font-semibold transition-all duration-300 backdrop-blur-md ${
-                  currentScreen === 'explore-frame' 
-                    ? 'text-white shadow-2xl' 
-                    : 'text-gray-700 hover:text-gray-900 bg-white/30 hover:bg-white/50'
-                }`}
-              >
-                {currentScreen === 'explore-frame' && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl shadow-lg animate-pulse" />
-                )}
-                <span className="relative flex items-center gap-2 drop-shadow-sm">
-                  🤖 AI Tools
-                  <span className="px-2 py-0.5 text-xs bg-red-500 text-white rounded-full animate-bounce">
-                    New
-                  </span>
-                </span>
-              </button>
-
-              <button
-                onClick={() => handleNavigation('tutorials-frame')}
-                className={`relative px-6 py-3 rounded-2xl font-semibold transition-all duration-300 backdrop-blur-md ${
-                  currentScreen === 'tutorials-frame' 
-                    ? 'text-white shadow-2xl' 
-                    : 'text-gray-700 hover:text-gray-900 bg-white/30 hover:bg-white/50'
-                }`}
-              >
-                {currentScreen === 'tutorials-frame' && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-green-600 to-teal-600 rounded-2xl shadow-lg animate-pulse" />
-                )}
-                <span className="relative flex items-center gap-2 drop-shadow-sm">
-                  📚 Learning
-                </span>
-              </button>
-
-              <button
-                onClick={() => handleNavigation('news')}
-                className={`relative px-6 py-3 rounded-2xl font-semibold transition-all duration-300 backdrop-blur-md ${
-                  currentScreen === 'news' 
-                    ? 'text-white shadow-2xl' 
-                    : 'text-gray-700 hover:text-gray-900 bg-white/30 hover:bg-white/50'
-                }`}
-              >
-                {currentScreen === 'news' && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-red-600 rounded-2xl shadow-lg animate-pulse" />
-                )}
-                <span className="relative flex items-center gap-2 drop-shadow-sm">
-                  📰 News
-                </span>
-              </button>
-            </div>
-
-            {/* Auth Buttons with Glassmorphism */}
-            <div className="flex items-center gap-4">
-              {user ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="flex items-center gap-2 px-4 py-2 bg-white/30 backdrop-blur-md border border-white/50 rounded-2xl hover:bg-white/50 transition-all duration-300">
-                    <Avatar className="w-8 h-8">
-                      <AvatarFallback className="bg-gradient-to-br from-blue-600 to-purple-600 text-white">
-                        {user.email?.charAt(0).toUpperCase() || 'U'}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className="text-gray-700 font-medium">{user.email?.split('@')[0]}</span>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
-                    <DropdownMenuItem onClick={() => handleNavigation('profile')}>
-                      <UserCircle className="w-4 h-4 mr-2" />
-                      Profile
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleNavigation('settings')}>
-                      <SettingsIcon className="w-4 h-4 mr-2" />
-                      Settings
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem 
-                      onClick={async () => {
-                        await signOut();
-                        handleNavigation('auth');
-                      }}
-                      className="text-red-600"
-                    >
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Sign Out
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : (
-                <>
+                {/* Navigation Links with Enhanced Design */}
+                <div className="flex items-center gap-2">
                   <button
-                    onClick={() => handleNavigation('sign-in')}
-                    className="px-6 py-3 text-gray-700 font-semibold bg-white/30 backdrop-blur-md border border-white/50 rounded-2xl hover:bg-white/50 transition-all duration-300 hover:shadow-lg hover:scale-105"
+                    onClick={() => handleNavigation('modern-home')}
+                    className={`relative px-6 py-3 rounded-2xl font-semibold transition-all duration-300 backdrop-blur-md ${
+                      currentScreen === 'modern-home' 
+                        ? 'text-white shadow-2xl' 
+                        : 'text-gray-700 hover:text-gray-900 bg-white/30 hover:bg-white/50'
+                    }`}
                   >
-                    Sign In
-                  </button>
-                  <button
-                    onClick={() => handleNavigation('auth')}
-                    className="relative px-8 py-3 font-bold text-white rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-2xl group overflow-hidden"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl" />
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl blur-xl opacity-50 group-hover:opacity-100 transition-opacity" />
-                    <span className="relative flex items-center gap-2">
-                      ✨ Get Started
-                      <svg className="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                      </svg>
+                    {currentScreen === 'modern-home' && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-lg animate-pulse" />
+                    )}
+                    <span className="relative flex items-center gap-2 drop-shadow-sm">
+                      🏠 Home
                     </span>
                   </button>
-                </>
-              )}
+
+                  <button
+                    onClick={() => handleNavigation('explore-frame')}
+                    className={`relative px-6 py-3 rounded-2xl font-semibold transition-all duration-300 backdrop-blur-md ${
+                      currentScreen === 'explore-frame' 
+                        ? 'text-white shadow-2xl' 
+                        : 'text-gray-700 hover:text-gray-900 bg-white/30 hover:bg-white/50'
+                    }`}
+                  >
+                    {currentScreen === 'explore-frame' && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl shadow-lg animate-pulse" />
+                    )}
+                    <span className="relative flex items-center gap-2 drop-shadow-sm">
+                      🤖 AI Tools
+                      <span className="px-2 py-0.5 text-xs bg-red-500 text-white rounded-full animate-bounce">
+                        New
+                      </span>
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={() => handleNavigation('tutorials-frame')}
+                    className={`relative px-6 py-3 rounded-2xl font-semibold transition-all duration-300 backdrop-blur-md ${
+                      currentScreen === 'tutorials-frame' 
+                        ? 'text-white shadow-2xl' 
+                        : 'text-gray-700 hover:text-gray-900 bg-white/30 hover:bg-white/50'
+                    }`}
+                  >
+                    {currentScreen === 'tutorials-frame' && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-green-600 to-teal-600 rounded-2xl shadow-lg animate-pulse" />
+                    )}
+                    <span className="relative flex items-center gap-2 drop-shadow-sm">
+                      📚 Learning
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={() => handleNavigation('news')}
+                    className={`relative px-6 py-3 rounded-2xl font-semibold transition-all duration-300 backdrop-blur-md ${
+                      currentScreen === 'news' 
+                        ? 'text-white shadow-2xl' 
+                        : 'text-gray-700 hover:text-gray-900 bg-white/30 hover:bg-white/50'
+                    }`}
+                  >
+                    {currentScreen === 'news' && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-red-600 rounded-2xl shadow-lg animate-pulse" />
+                    )}
+                    <span className="relative flex items-center gap-2 drop-shadow-sm">
+                      📰 News
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={() => handleNavigation('wallet')}
+                    className={`relative px-6 py-3 rounded-2xl font-semibold transition-all duration-300 backdrop-blur-md ${
+                      currentScreen === 'wallet' 
+                        ? 'text-white shadow-2xl' 
+                        : 'text-gray-700 hover:text-gray-900 bg-white/30 hover:bg-white/50'
+                    }`}
+                  >
+                    {currentScreen === 'wallet' && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-blue-600 rounded-2xl shadow-lg animate-pulse" />
+                    )}
+                    <span className="relative flex items-center gap-2 drop-shadow-sm">
+                      💳 Wallet
+                    </span>
+                  </button>
+                </div>
+
+                {/* Auth Buttons with Glassmorphism */}
+                <div className="flex items-center gap-4">
+                  {user ? (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger className="flex items-center gap-2 px-4 py-2 bg-white/30 backdrop-blur-md border border-white/50 rounded-2xl hover:bg-white/50 transition-all duration-300">
+                        <Avatar className="w-8 h-8">
+                          <AvatarFallback className="bg-gradient-to-br from-blue-600 to-purple-600 text-white">
+                            {user.email?.charAt(0).toUpperCase() || 'U'}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="text-gray-700 font-medium">{user.email?.split('@')[0]}</span>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-56">
+                        <DropdownMenuItem onClick={() => handleNavigation('profile')}>
+                          <UserCircle className="w-4 h-4 mr-2" />
+                          Profile
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleNavigation('settings')}>
+                          <SettingsIcon className="w-4 h-4 mr-2" />
+                          Settings
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem 
+                          onClick={async () => {
+                            await signOut();
+                            handleNavigation('auth');
+                          }}
+                          className="text-red-600"
+                        >
+                          <LogOut className="w-4 h-4 mr-2" />
+                          Sign Out
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => handleNavigation('sign-in')}
+                        className="px-6 py-3 text-gray-700 font-semibold bg-white/30 backdrop-blur-md border border-white/50 rounded-2xl hover:bg-white/50 transition-all duration-300 hover:shadow-lg hover:scale-105"
+                      >
+                        Sign In
+                      </button>
+                      <button
+                        onClick={() => handleNavigation('auth')}
+                        className="relative px-8 py-3 font-bold text-white rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-2xl group overflow-hidden"
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl blur-xl opacity-50 group-hover:opacity-100 transition-opacity" />
+                        <span className="relative flex items-center gap-2">
+                          ✨ Get Started
+                          <svg className="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                          </svg>
+                        </span>
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </nav>
-      
-      {/* Spacer for fixed navbar */}
-      <div className="h-20" />
+          </nav>
+          
+          {/* Spacer for fixed navbar */}
+          <div className="h-20" />
+        </>
+      )}
 
       {/* Main Content - NO BACKGROUND COLOR, LET COMPONENT HANDLE IT */}
       <main>

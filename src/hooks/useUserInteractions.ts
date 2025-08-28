@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import { UserFavorite, Collection, Review } from '@/lib/supabase';
+import { UserFavorite, Collection, Review } from '@/lib/supabaseClient';
 
 // Hook for managing user favorites
 export function useFavorites() {

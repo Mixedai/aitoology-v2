@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
-import { Tool } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
+import { Tool } from '@/lib/supabaseClient';
 import { toast } from 'sonner';
 
 // Hook to fetch all tools

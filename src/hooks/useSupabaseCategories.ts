@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 
 export interface Category {
   id: string;
@@ -24,22 +24,32 @@ export function useSupabaseCategories() {
     try {
       setLoading(true);
       
-      // Fetch categories with tool count
-      const { data, error } = await supabase
+      // First fetch all categories
+      const { data: categoriesData, error: catError } = await supabase
         .from('categories')
-        .select(`
-          *,
-          tools:tools(count)
-        `)
+        .select('*')
         .order('name');
 
-      if (error) throw error;
+      if (catError) throw catError;
 
-      // Map the data to include tool count
-      const categoriesWithCount = data?.map(cat => ({
-        ...cat,
-        tool_count: cat.tools?.[0]?.count || 0
-      })) || [];
+      // Then fetch tool counts for each category
+      const categoriesWithCount = await Promise.all(
+        (categoriesData || []).map(async (cat) => {
+          const { count, error: countError } = await supabase
+            .from('tools')
+            .select('*', { count: 'exact', head: true })
+            .eq('category_id', cat.id);
+          
+          if (countError) {
+            console.warn(`Error fetching tool count for category ${cat.name}:`, countError);
+          }
+          
+          return {
+            ...cat,
+            tool_count: count || 0
+          };
+        })
+      );
 
       setCategories(categoriesWithCount);
     } catch (err) {

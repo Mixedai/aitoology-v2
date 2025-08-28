@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
-import type { Tool } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
+import type { Tool } from '@/lib/supabaseClient';
 
 export function useSupabaseTools() {
   const [tools, setTools] = useState<Tool[]>([]);

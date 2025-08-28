@@ -65,21 +65,9 @@ export function SimpleNavbar({ onNavigate }: { onNavigate?: any }) {
           </nav>
         </div>
         
+        {/* Auth buttons removed - handled by main navigation */}
         <div className="flex items-center gap-4">
-          <button 
-            type="button"
-            onClick={(e) => handleNavigation(e, 'sign-in')}
-            className="px-4 py-2 bg-white text-blue-600 rounded-md hover:bg-blue-50 transition-colors cursor-pointer"
-          >
-            Sign In
-          </button>
-          <button 
-            type="button"
-            onClick={(e) => handleNavigation(e, 'auth')}
-            className="px-4 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-800 transition-colors cursor-pointer"
-          >
-            Sign Up
-          </button>
+          {/* Placeholder for future menu items */}
         </div>
       </div>
     </div>

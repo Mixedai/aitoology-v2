@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 import { toast } from 'sonner';
 
 interface AuthContextType {
@@ -26,7 +26,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Check active session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('Initial session check:', session?.user?.email);
+      console.log('Initial session check:', session ? 'Session exists' : 'No session');
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -43,8 +43,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       // Log specific events
       if (event === 'SIGNED_IN') {
-        console.log('User signed in:', session?.user?.email);
-        toast.success(`Welcome ${session?.user?.email}!`);
+        console.log('User signed in');
+        toast.success('Welcome back!');
       } else if (event === 'SIGNED_OUT') {
         console.log('User signed out');
       }
@@ -99,24 +99,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signIn = async (email: string, password: string) => {
+    console.log('🔐 AuthContext.signIn called');
+    
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Sign in error:', error.message);
+        throw error;
+      }
       
       // Manually update state if needed
       if (data?.user && data?.session) {
         setUser(data.user);
         setSession(data.session);
-        console.log('Sign in successful:', data.user.email);
+        console.log('✅ Sign in successful');
       }
       
       toast.success('Welcome back!');
     } catch (error: any) {
-      console.error('Sign in error:', error);
+      console.error('❌ Sign in error:', error.message);
       toast.error(error.message || 'Failed to sign in');
       throw error;
     }
