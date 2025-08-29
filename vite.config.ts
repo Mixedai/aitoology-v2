@@ -37,51 +37,11 @@ export default defineConfig({
     sourcemap: false,
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          // Core React dependencies
-          if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
-            return 'react-vendor';
-          }
-          // UI components from Radix
-          if (id.includes('@radix-ui')) {
-            return 'ui-vendor';
-          }
-          // Supabase SDK
-          if (id.includes('@supabase')) {
-            return 'supabase';
-          }
-          // Animation libraries
-          if (id.includes('framer-motion') || id.includes('motion')) {
-            return 'animation';
-          }
-          // Form libraries
-          if (id.includes('react-hook-form') || id.includes('@hookform')) {
-            return 'forms';
-          }
-          // Date/calendar libraries
-          if (id.includes('react-day-picker') || id.includes('date-fns')) {
-            return 'date-utils';
-          }
-          // Chart libraries
-          if (id.includes('recharts')) {
-            return 'charts';
-          }
-          // Component-based chunking for better code splitting
-          if (id.includes('components/design-system')) {
-            return 'design-system';
-          }
-          if (id.includes('components/admin')) {
-            return 'admin';
-          }
-          if (id.includes('components/auth')) {
-            return 'auth';
-          }
-          if (id.includes('components/tools')) {
-            return 'tools';
-          }
-          if (id.includes('components/workflows')) {
-            return 'workflows';
-          }
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'supabase': ['@supabase/supabase-js'],
+          'animation': ['framer-motion'],
+          'charts': ['recharts'],
         },
         chunkFileNames: (chunkInfo) => {
           const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId.split('/').pop() : 'chunk';

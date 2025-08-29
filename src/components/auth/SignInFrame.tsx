@@ -26,7 +26,6 @@ export function SignInFrame({ onNavigate, currentScreen = 'sign-in' }: SignInFra
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
-  const [focusedField, setFocusedField] = useState<string | null>(null);
 
   // Refs for accessibility and animations
   const formRef = useRef<HTMLFormElement>(null);
@@ -140,9 +139,6 @@ export function SignInFrame({ onNavigate, currentScreen = 'sign-in' }: SignInFra
   };
 
   // Navigation handlers
-  const handleMagicLink = () => {
-    onNavigate?.(currentScreen, 'magic-link');
-  };
 
   const handleForgotPassword = () => {
     onNavigate?.(currentScreen, 'forgot-password');
@@ -162,14 +158,6 @@ export function SignInFrame({ onNavigate, currentScreen = 'sign-in' }: SignInFra
     if (error) setError(null);
   };
 
-  // Focus handlers for enhanced UX
-  const handleFocus = (field: string) => {
-    setFocusedField(field);
-  };
-
-  const handleBlur = () => {
-    setFocusedField(null);
-  };
 
   // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -426,8 +414,6 @@ export function SignInFrame({ onNavigate, currentScreen = 'sign-in' }: SignInFra
                       required
                       value={formData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
-                      onFocus={() => handleFocus('email')}
-                      onBlur={handleBlur}
                       placeholder="Enter your email"
                       disabled={isLoading}
                       className="w-full px-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-purple-100 focus:border-purple-500 transition-all"
@@ -449,8 +435,6 @@ export function SignInFrame({ onNavigate, currentScreen = 'sign-in' }: SignInFra
                         required
                         value={formData.password}
                         onChange={(e) => handleInputChange('password', e.target.value)}
-                        onFocus={() => handleFocus('password')}
-                        onBlur={handleBlur}
                         placeholder="Enter your password"
                         disabled={isLoading}
                         className="w-full px-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-purple-100 focus:border-purple-500 transition-all pr-12"

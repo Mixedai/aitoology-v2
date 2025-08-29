@@ -1,5 +1,4 @@
-import { useEffect,useState, } from 'react';
-
+import { useEffect, useState } from 'react';
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Input } from "../ui/input";
@@ -17,8 +16,13 @@ import {
   Grid3x3,
   List,
   SlidersHorizontal,
-  X
+  X,
+  Loader2
 } from "lucide-react";
+
+// Import services and types
+import { aiToolsService, AITool, ToolCategory } from '../../lib/aiToolsService';
+import { supabase } from '../../lib/supabaseClient';
 
 // Import state management components
 import { 
@@ -30,8 +34,7 @@ import {
   FilterEmptyState 
 } from '../ui/empty-state';
 import { 
-  ListErrorState, 
-  ApiErrorState 
+  ListErrorState
 } from '../ui/error-state';
 import { toastNotifications } from '../ui/toast-notifications';
 
@@ -39,8 +42,9 @@ import { toastNotifications } from '../ui/toast-notifications';
 type LoadingState = 'idle' | 'loading' | 'success' | 'error';
 
 interface BrowseState {
-  tools: any[];
-  filteredTools: any[];
+  tools: AITool[];
+  filteredTools: AITool[];
+  categories: ToolCategory[];
   loadingState: LoadingState;
   error: string | null;
   searchQuery: string;
@@ -50,102 +54,18 @@ interface BrowseState {
     features: string[];
   };
   viewMode: 'grid' | 'list';
-  sortBy: 'name' | 'rating' | 'popularity' | 'newest';
+  sortBy: 'name' | 'rating' | 'popular' | 'newest';
+  currentUser: any;
+  userFavorites: Set<string>;
+  userBookmarks: Set<string>;
 }
-
-// Mock data for tools
-const mockTools = [
-  {
-    id: 1,
-    name: "ChatGPT",
-    description: "Advanced AI chatbot for conversations, content creation, and complex problem solving",
-    category: "Conversational AI",
-    rating: 4.8,
-    users: "100M+",
-    pricing: "Freemium",
-    features: ["Natural Language", "Content Creation", "Code Generation"],
-    logo: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=64&h=64&fit=crop&crop=face",
-    featured: true,
-    verified: true,
-    trending: true
-  },
-  {
-    id: 2,
-    name: "Midjourney",
-    description: "AI-powered image generation tool for creating stunning artwork and designs",
-    category: "Image Generation",
-    rating: 4.6,
-    users: "15M+",
-    pricing: "Paid",
-    features: ["Image Generation", "Art Creation", "Style Transfer"],
-    logo: "https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=64&h=64&fit=crop&crop=face",
-    featured: true,
-    verified: true,
-    trending: false
-  },
-  {
-    id: 3,
-    name: "GitHub Copilot",
-    description: "AI pair programmer that helps you write code faster and with fewer errors",
-    category: "Code Assistant",
-    rating: 4.5,
-    users: "5M+",
-    pricing: "Paid",
-    features: ["Code Generation", "Auto-completion", "Documentation"],
-    logo: "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?w=64&h=64&fit=crop&crop=face",
-    featured: false,
-    verified: true,
-    trending: true
-  },
-  {
-    id: 4,
-    name: "Notion AI",
-    description: "Integrated AI writing assistant for notes, documents, and project management",
-    category: "Productivity",
-    rating: 4.4,
-    users: "20M+",
-    pricing: "Freemium",
-    features: ["Writing Assistant", "Summarization", "Translation"],
-    logo: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=64&h=64&fit=crop&crop=face",
-    featured: false,
-    verified: true,
-    trending: false
-  },
-  {
-    id: 5,
-    name: "RunwayML",
-    description: "Creative AI toolkit for video editing, image generation, and content creation",
-    category: "Creative AI",
-    rating: 4.3,
-    users: "2M+",
-    pricing: "Freemium",
-    features: ["Video Editing", "Image Generation", "AI Effects"],
-    logo: "https://images.unsplash.com/photo-1611262588024-d12430b98920?w=64&h=64&fit=crop&crop=face",
-    featured: false,
-    verified: true,
-    trending: true
-  },
-  {
-    id: 6,
-    name: "Jasper AI",
-    description: "AI writing assistant for marketing copy, blog posts, and business content",
-    category: "Content Creation",
-    rating: 4.2,
-    users: "1M+",
-    pricing: "Paid",
-    features: ["Content Writing", "SEO Optimization", "Brand Voice"],
-    logo: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=64&h=64&fit=crop&crop=face",
-    featured: false,
-    verified: true,
-    trending: false
-  }
-];
 
 export function BrowseTools({ onNavigate }: { onNavigate?: (screen: string, params?: any) => void }) {
   // State management
   const [state, setState] = useState<BrowseState>({
     tools: [],
     filteredTools: [],
+    categories: [],
     loadingState: 'idle',
     error: null,
     searchQuery: '',
@@ -155,30 +75,71 @@ export function BrowseTools({ onNavigate }: { onNavigate?: (screen: string, para
       features: []
     },
     viewMode: 'grid',
-    sortBy: 'popularity'
+    sortBy: 'rating',
+    currentUser: null,
+    userFavorites: new Set(),
+    userBookmarks: new Set()
   });
 
-  // Load tools data
+  // Load initial data
   useEffect(() => {
-    loadTools();
+    loadInitialData();
+    checkCurrentUser();
   }, []);
 
   // Filter tools when search or filters change
   useEffect(() => {
     filterTools();
-  }, [state.tools, state.searchQuery, state.activeFilters]);
+  }, [state.searchQuery, state.activeFilters, state.sortBy]);
 
-  const loadTools = async () => {
+  const checkCurrentUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      setState(prev => ({ ...prev, currentUser: user }));
+      loadUserInteractions(user.id);
+    }
+  };
+
+  const loadUserInteractions = async (userId: string) => {
+    // Load user favorites
+    const { data: favorites } = await aiToolsService.getUserFavorites(userId);
+    if (favorites) {
+      setState(prev => ({
+        ...prev,
+        userFavorites: new Set(favorites.map((f: any) => f.ai_tools?.id || f.id))
+      }));
+    }
+
+    // Load user bookmarks
+    const { data: bookmarks } = await aiToolsService.getUserBookmarks(userId);
+    if (bookmarks) {
+      setState(prev => ({
+        ...prev,
+        userBookmarks: new Set(bookmarks.map(b => b.ai_tools.id))
+      }));
+    }
+  };
+
+  const loadInitialData = async () => {
     setState(prev => ({ ...prev, loadingState: 'loading', error: null }));
     
     try {
-      // Simulate API call - replace with actual API
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Use mock data for now
+      // Load categories
+      const { data: categoriesData, error: categoriesError } = await aiToolsService.getCategories();
+      if (categoriesError) throw categoriesError;
+
+      // Load tools
+      const { data: toolsData, error: toolsError } = await aiToolsService.getTools({
+        sortBy: 'rating',
+        limit: 50
+      });
+      if (toolsError) throw toolsError;
+
       setState(prev => ({ 
         ...prev, 
-        tools: mockTools, 
+        tools: toolsData || [], 
+        filteredTools: toolsData || [],
+        categories: categoriesData || [],
         loadingState: 'success' 
       }));
     } catch (error) {
@@ -191,43 +152,46 @@ export function BrowseTools({ onNavigate }: { onNavigate?: (screen: string, para
     }
   };
 
-  const filterTools = () => {
-    let filtered = [...state.tools];
+  const filterTools = async () => {
+    setState(prev => ({ ...prev, loadingState: 'loading' }));
 
-    // Apply search filter
-    if (state.searchQuery.trim()) {
-      const query = state.searchQuery.toLowerCase();
-      filtered = filtered.filter(tool => 
-        tool.name.toLowerCase().includes(query) ||
-        tool.description.toLowerCase().includes(query) ||
-        tool.category.toLowerCase().includes(query)
-      );
+    try {
+      const filters: any = {
+        sortBy: state.sortBy
+      };
+
+      // Apply search filter
+      if (state.searchQuery.trim()) {
+        filters.search = state.searchQuery;
+      }
+
+      // Apply category filters
+      if (state.activeFilters.category.length > 0) {
+        filters.category = state.activeFilters.category[0]; // API takes single category
+      }
+
+      // Apply pricing filters
+      if (state.activeFilters.pricing.length > 0) {
+        filters.pricing = state.activeFilters.pricing;
+      }
+
+      const { data, error } = await aiToolsService.getTools(filters);
+      
+      if (error) throw error;
+
+      setState(prev => ({ 
+        ...prev, 
+        filteredTools: data || [],
+        loadingState: 'success'
+      }));
+    } catch (error) {
+      console.error('Error filtering tools:', error);
+      setState(prev => ({ 
+        ...prev, 
+        loadingState: 'error',
+        error: 'Failed to filter tools'
+      }));
     }
-
-    // Apply category filters
-    if (state.activeFilters.category.length > 0) {
-      filtered = filtered.filter(tool => 
-        state.activeFilters.category.includes(tool.category)
-      );
-    }
-
-    // Apply pricing filters
-    if (state.activeFilters.pricing.length > 0) {
-      filtered = filtered.filter(tool => 
-        state.activeFilters.pricing.includes(tool.pricing)
-      );
-    }
-
-    // Apply feature filters
-    if (state.activeFilters.features.length > 0) {
-      filtered = filtered.filter(tool => 
-        state.activeFilters.features.some(feature => 
-          tool.features.includes(feature)
-        )
-      );
-    }
-
-    setState(prev => ({ ...prev, filteredTools: filtered }));
   };
 
   const handleSearch = (query: string) => {
@@ -263,20 +227,66 @@ export function BrowseTools({ onNavigate }: { onNavigate?: (screen: string, para
   };
 
   const retryLoad = () => {
-    loadTools();
+    loadInitialData();
   };
 
-  const handleToolAction = (action: string, toolId: number, toolName: string) => {
+  const handleToolAction = async (action: string, tool: AITool) => {
+    if (!state.currentUser) {
+      toastNotifications.error('Please sign in to perform this action');
+      onNavigate?.('signin');
+      return;
+    }
+
     switch (action) {
       case 'favorite':
-        toastNotifications.toolAdded(toolName);
+        const { favorited } = await aiToolsService.toggleFavorite(tool.id, state.currentUser.id);
+        if (favorited) {
+          setState(prev => ({
+            ...prev,
+            userFavorites: new Set([...prev.userFavorites, tool.id])
+          }));
+          toastNotifications.success(`Added ${tool.name} to favorites`);
+        } else {
+          const newFavorites = new Set(state.userFavorites);
+          newFavorites.delete(tool.id);
+          setState(prev => ({
+            ...prev,
+            userFavorites: newFavorites
+          }));
+          toastNotifications.success(`Removed ${tool.name} from favorites`);
+        }
         break;
-      case 'subscribe':
-        toastNotifications.subscriptionAdded(toolName);
+      
+      case 'bookmark':
+        const { bookmarked } = await aiToolsService.toggleBookmark(tool.id, state.currentUser.id);
+        if (bookmarked) {
+          setState(prev => ({
+            ...prev,
+            userBookmarks: new Set([...prev.userBookmarks, tool.id])
+          }));
+          toastNotifications.success(`Bookmarked ${tool.name}`);
+        } else {
+          const newBookmarks = new Set(state.userBookmarks);
+          newBookmarks.delete(tool.id);
+          setState(prev => ({
+            ...prev,
+            userBookmarks: newBookmarks
+          }));
+          toastNotifications.success(`Removed ${tool.name} from bookmarks`);
+        }
         break;
+      
       case 'view':
-        onNavigate?.('tool-detail', { toolId });
+        await aiToolsService.incrementClickCount(tool.id);
+        if (tool.website_url) {
+          window.open(tool.website_url, '_blank');
+        }
         break;
+      
+      case 'details':
+        onNavigate?.('tool-detail', { toolId: tool.id, toolSlug: tool.slug });
+        break;
+      
       default:
         break;
     }
@@ -295,12 +305,12 @@ export function BrowseTools({ onNavigate }: { onNavigate?: (screen: string, para
   const hasActiveFilters = activeFilterCount > 0 || state.searchQuery.trim();
 
   // Render loading state
-  if (state.loadingState === 'loading') {
+  if (state.loadingState === 'loading' && state.tools.length === 0) {
     return <BrowseLoadingSkeleton />;
   }
 
   // Render error state
-  if (state.loadingState === 'error') {
+  if (state.loadingState === 'error' && state.tools.length === 0) {
     return <ListErrorState onRetry={retryLoad} />;
   }
 
@@ -331,7 +341,7 @@ export function BrowseTools({ onNavigate }: { onNavigate?: (screen: string, para
   if (isEmpty && hasActiveFilters) {
     // No filter results
     const activeFilterLabels = Object.entries(state.activeFilters)
-      .flatMap(([key, values]) => values)
+      .flatMap(([, values]) => values)
       .filter(Boolean);
     
     return (
@@ -401,6 +411,24 @@ export function BrowseTools({ onNavigate }: { onNavigate?: (screen: string, para
           </div>
         </div>
 
+        {/* Category Filter Pills */}
+        <div className="flex flex-wrap gap-2">
+          {state.categories.map(category => (
+            <Button
+              key={category.id}
+              variant={state.activeFilters.category.includes(category.slug) ? "default" : "outline"}
+              size="sm"
+              onClick={() => handleFilterChange('category', category.slug)}
+              className="gap-1"
+            >
+              {category.name}
+              {state.activeFilters.category.includes(category.slug) && (
+                <X className="w-3 h-3 ml-1" />
+              )}
+            </Button>
+          ))}
+        </div>
+
         {/* Active Filters */}
         {hasActiveFilters && (
           <Card className="p-4">
@@ -443,22 +471,30 @@ export function BrowseTools({ onNavigate }: { onNavigate?: (screen: string, para
         {/* Results Summary */}
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>
-            Showing {state.filteredTools.length} of {state.tools.length} tools
+            Showing {state.filteredTools.length} tools
           </span>
           <div className="flex items-center gap-2">
             <span>Sort by:</span>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-sm font-normal"
+            <select
+              value={state.sortBy}
+              onChange={(e) => setState(prev => ({ ...prev, sortBy: e.target.value as any }))}
+              className="bg-background border rounded px-2 py-1"
             >
-              {state.sortBy === 'popularity' ? 'Most Popular' : 
-               state.sortBy === 'rating' ? 'Highest Rated' : 
-               state.sortBy === 'newest' ? 'Newest' : 'Name'}
-            </Button>
+              <option value="rating">Highest Rated</option>
+              <option value="popular">Most Popular</option>
+              <option value="newest">Newest</option>
+              <option value="name">Name</option>
+            </select>
           </div>
         </div>
       </div>
+
+      {/* Loading indicator for filtering */}
+      {state.loadingState === 'loading' && state.tools.length > 0 && (
+        <div className="flex justify-center py-4">
+          <Loader2 className="w-6 h-6 animate-spin text-primary" />
+        </div>
+      )}
 
       {/* Tools Grid */}
       <div className={`grid gap-6 ${
@@ -471,13 +507,15 @@ export function BrowseTools({ onNavigate }: { onNavigate?: (screen: string, para
             key={tool.id}
             tool={tool}
             viewMode={state.viewMode}
-            onAction={(action) => handleToolAction(action, tool.id, tool.name)}
+            isFavorited={state.userFavorites.has(tool.id)}
+            isBookmarked={state.userBookmarks.has(tool.id)}
+            onAction={(action) => handleToolAction(action, tool)}
           />
         ))}
       </div>
 
       {/* Load More */}
-      {state.filteredTools.length > 0 && (
+      {state.filteredTools.length > 0 && state.filteredTools.length % 50 === 0 && (
         <div className="text-center">
           <Button variant="outline" size="lg">
             Load More Tools
@@ -488,12 +526,39 @@ export function BrowseTools({ onNavigate }: { onNavigate?: (screen: string, para
   );
 }
 
-// Enhanced Tool Card Component with actions
-function ToolCard({ tool, viewMode, onAction }: {
-  tool: any;
+// Enhanced Tool Card Component with real data
+function ToolCard({ 
+  tool, 
+  viewMode, 
+  isFavorited,
+  isBookmarked,
+  onAction 
+}: {
+  tool: AITool;
   viewMode: 'grid' | 'list';
+  isFavorited: boolean;
+  isBookmarked: boolean;
   onAction: (action: string) => void;
 }) {
+  // Get pricing display text
+  const getPricingDisplay = () => {
+    switch (tool.pricing_model) {
+      case 'free':
+        return 'Free';
+      case 'freemium':
+        return tool.starting_price ? `Free / $${tool.starting_price}/mo` : 'Freemium';
+      case 'paid':
+      case 'subscription':
+        return tool.starting_price ? `$${tool.starting_price}/mo` : 'Paid';
+      case 'usage_based':
+        return 'Usage Based';
+      case 'enterprise':
+        return 'Enterprise';
+      default:
+        return tool.pricing_model;
+    }
+  };
+
   return (
     <Card className={`group hover:shadow-lg transition-all duration-200 ${
       viewMode === 'list' ? 'flex flex-row' : 'flex flex-col h-full'
@@ -501,29 +566,45 @@ function ToolCard({ tool, viewMode, onAction }: {
       {/* Tool Image/Logo */}
       <div className={`relative ${
         viewMode === 'list' ? 'w-48 flex-shrink-0' : 'w-full h-48'
-      } bg-gradient-to-br from-primary/10 to-secondary/10 overflow-hidden`}>
-        <img 
-          src={tool.logo || `https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop`}
-          alt={tool.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-        />
+      } bg-gradient-to-br from-primary/10 to-secondary/10 overflow-hidden flex items-center justify-center`}>
+        {tool.logo_url ? (
+          <img 
+            src={tool.logo_url}
+            alt={tool.name}
+            className="w-24 h-24 object-contain"
+            onError={(e) => {
+              e.currentTarget.src = `https://ui-avatars.com/api/?name=${tool.name}&background=random`;
+            }}
+          />
+        ) : (
+          <div className="w-24 h-24 bg-primary/20 rounded-lg flex items-center justify-center">
+            <span className="text-3xl font-bold text-primary">
+              {tool.name.charAt(0)}
+            </span>
+          </div>
+        )}
         
         {/* Tool Badges */}
         <div className="absolute top-3 left-3 flex flex-wrap gap-1">
-          {tool.featured && (
+          {tool.is_featured && (
             <Badge variant="secondary" className="bg-primary text-primary-foreground text-xs">
               Featured
             </Badge>
           )}
-          {tool.trending && (
+          {tool.is_trending && (
             <Badge variant="secondary" className="bg-orange-100 text-orange-700 text-xs">
               <TrendingUp className="w-3 h-3 mr-1" />
               Trending
             </Badge>
           )}
-          {tool.verified && (
+          {tool.is_verified && (
             <Badge variant="secondary" className="bg-green-100 text-green-700 text-xs">
               Verified
+            </Badge>
+          )}
+          {tool.is_new && (
+            <Badge variant="secondary" className="bg-blue-100 text-blue-700 text-xs">
+              New
             </Badge>
           )}
         </div>
@@ -533,20 +614,20 @@ function ToolCard({ tool, viewMode, onAction }: {
           <Button
             size="sm"
             variant="secondary"
-            className="h-8 w-8 p-0 bg-white/90 hover:bg-white"
+            className={`h-8 w-8 p-0 bg-white/90 hover:bg-white ${isFavorited ? 'text-red-500' : ''}`}
             onClick={() => onAction('favorite')}
             aria-label="Add to favorites"
           >
-            <Heart className="w-4 h-4" />
+            <Heart className={`w-4 h-4 ${isFavorited ? 'fill-current' : ''}`} />
           </Button>
           <Button
             size="sm"
             variant="secondary"
-            className="h-8 w-8 p-0 bg-white/90 hover:bg-white"
+            className={`h-8 w-8 p-0 bg-white/90 hover:bg-white ${isBookmarked ? 'text-blue-500' : ''}`}
             onClick={() => onAction('bookmark')}
             aria-label="Bookmark tool"
           >
-            <Bookmark className="w-4 h-4" />
+            <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} />
           </Button>
         </div>
       </div>
@@ -560,12 +641,14 @@ function ToolCard({ tool, viewMode, onAction }: {
                 <h3 className="font-semibold group-hover:text-primary transition-colors">
                   {tool.name}
                 </h3>
-                <Badge variant="outline" className="text-xs">
-                  {tool.category}
-                </Badge>
+                {tool.category && (
+                  <Badge variant="outline" className="text-xs">
+                    {tool.category.name}
+                  </Badge>
+                )}
               </div>
               <p className="text-muted-foreground text-sm line-clamp-2">
-                {tool.description}
+                {tool.short_description || tool.description}
               </p>
             </div>
             <Button
@@ -581,47 +664,57 @@ function ToolCard({ tool, viewMode, onAction }: {
         </CardHeader>
 
         <CardContent>
-          {/* Features */}
-          <div className="flex flex-wrap gap-1 mb-4">
-            {tool.features?.slice(0, 3).map((feature: string) => (
-              <Badge key={feature} variant="secondary" className="text-xs">
-                {feature}
-              </Badge>
-            ))}
-            {tool.features?.length > 3 && (
-              <Badge variant="outline" className="text-xs">
-                +{tool.features.length - 3}
-              </Badge>
-            )}
-          </div>
+          {/* Features/Capabilities */}
+          {tool.ai_capabilities && tool.ai_capabilities.length > 0 && (
+            <div className="flex flex-wrap gap-1 mb-4">
+              {tool.ai_capabilities.slice(0, 3).map((capability: string) => (
+                <Badge key={capability} variant="secondary" className="text-xs">
+                  {capability.replace(/_/g, ' ')}
+                </Badge>
+              ))}
+              {tool.ai_capabilities.length > 3 && (
+                <Badge variant="outline" className="text-xs">
+                  +{tool.ai_capabilities.length - 3}
+                </Badge>
+              )}
+            </div>
+          )}
 
           {/* Stats */}
           <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1">
-                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                <span>{tool.rating}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Users className="w-4 h-4" />
-                <span>{tool.users}</span>
-              </div>
+              {tool.rating > 0 && (
+                <div className="flex items-center gap-1">
+                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  <span>{tool.rating.toFixed(1)}</span>
+                  {tool.total_reviews > 0 && (
+                    <span className="text-xs">({tool.total_reviews})</span>
+                  )}
+                </div>
+              )}
+              {tool.total_users && (
+                <div className="flex items-center gap-1">
+                  <Users className="w-4 h-4" />
+                  <span>{tool.total_users}</span>
+                </div>
+              )}
             </div>
             <div className="flex items-center gap-1">
               <DollarSign className="w-4 h-4" />
-              <span>{tool.pricing}</span>
+              <span>{getPricingDisplay()}</span>
             </div>
           </div>
 
           {/* Actions */}
           <div className="flex gap-2">
-            <Button size="sm" className="flex-1" onClick={() => onAction('view')}>
+            <Button size="sm" className="flex-1" onClick={() => onAction('details')}>
               View Details
             </Button>
             <Button 
               size="sm" 
               variant="outline"
-              onClick={() => onAction('subscribe')}
+              onClick={() => onAction('view')}
+              disabled={!tool.website_url}
             >
               <ExternalLink className="w-4 h-4" />
             </Button>

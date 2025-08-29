@@ -965,7 +965,7 @@ export function NewModernHome({ onNavigate }: NewModernHomeProps) {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden" style={{ position: 'relative' }}>
       {/* Enhanced Navbar with Glassmorphism */}
       <header className="fixed top-0 w-full bg-transparent z-50 px-8 py-4">
         <div className="flex items-center justify-between max-w-7xl mx-auto">

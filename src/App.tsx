@@ -27,7 +27,8 @@ import {
   CheckSquare,
   PaintBucket,
   MousePointer,
-  Wand2
+  Wand2,
+  Lock
 } from 'lucide-react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Toaster } from 'sonner';
@@ -48,6 +49,7 @@ import { navigationLogger } from './utils/navigationLogger';
 import { logger } from './utils/logger';
 
 // Import navigation components
+import { SecretAdminAccess } from './components/admin/SecretAdminAccess';
 import { AppRouter } from './components/navigation/AppRouter';
 import { CommandPalette } from './components/navigation/CommandPalette';
 // import { GlobalNavbarMaster } from './components/navigation/GlobalNavbarMaster';
@@ -58,6 +60,9 @@ import { NewModernHome } from './components/home/NewModernHome';
 import { SignInFrame } from './components/auth/SignInFrame';
 import { AuthOnboarding } from './components/auth/AuthOnboarding';
 import { NotFound } from './components/error/NotFound';
+
+// BrowseTools component is available but not used in main navigation
+// import { BrowseTools } from './components/browse/BrowseTools';
 
 // Lazy load all other screen components
 const AIToologistDesignSystem = lazy(() => import('./components/design-system/AIToologistDesignSystem').then(m => ({ default: m.AIToologistDesignSystem })));
@@ -73,6 +78,8 @@ const ModernDashboard = lazy(() => import('./components/tool-wallet/ModernDashbo
 const SubmitTool = lazy(() => import('./components/submit-tool/SubmitTool').then(m => ({ default: m.SubmitTool })));
 const AdminPanel = lazy(() => import('./components/admin/AdminPanel').then(m => ({ default: m.AdminPanel })));
 const ModerationQueue = lazy(() => import('./components/admin/ModerationQueue').then(m => ({ default: m.ModerationQueue })));
+const AdminLoginComponent = lazy(() => import('./components/admin/AdminLogin').then(m => ({ default: m.AdminLogin })));
+const AdminDashboardComponent = lazy(() => import('./components/admin/EnhancedAdminDashboard').then(m => ({ default: m.EnhancedAdminDashboard })));
 const ForgotPasswordFrame = lazy(() => import('./components/auth/ForgotPasswordFrame').then(m => ({ default: m.ForgotPasswordFrame })));
 const MagicLinkFrame = lazy(() => import('./components/auth/MagicLinkFrame').then(m => ({ default: m.MagicLinkFrame })));
 const TwoFactorFrame = lazy(() => import('./components/auth/TwoFactorFrame').then(m => ({ default: m.TwoFactorFrame })));
@@ -89,8 +96,9 @@ const ToolCombinationsFrame = lazy(() => import('./components/workflows/ToolComb
 const NewsFrame = lazy(() => import('./components/news/NewsFrame').then(m => ({ default: m.NewsFrame })));
 const NewsDetailFrame = lazy(() => import('./components/news/NewsDetailFrame').then(m => ({ default: m.NewsDetailFrame })));
 
-// Lazy load Settings
+// Lazy load Settings and Profile
 const Settings = lazy(() => import('./components/settings/Settings').then(m => ({ default: m.Settings })));
+const UserProfile = lazy(() => import('./components/profile/UserProfile').then(m => ({ default: m.UserProfile })));
 
 // Lazy load AI Chatbot
 const AIChatbot = lazy(() => import('./components/ai-chatbot/AIChatbot').then(m => ({ default: m.AIChatbot })));
@@ -269,6 +277,22 @@ const screens = [
     category: 'Admin'
   },
   {
+    id: 'admin-login',
+    title: 'Admin Login',
+    description: 'Secure admin authentication portal with multi-factor support',
+    icon: Lock,
+    component: (props: any) => <AdminLoginComponent onNavigate={props.onNavigateToScreen} />,
+    category: 'Admin'
+  },
+  {
+    id: 'admin-dashboard',
+    title: 'Admin Dashboard',
+    description: 'Complete admin control panel for managing AI tools, users, and system settings',
+    icon: Shield,
+    component: AdminDashboardComponent,
+    category: 'Admin'
+  },
+  {
     id: 'moderation',
     title: 'Moderation Queue',
     description: 'Review and approve submitted AI tools with Kanban workflow. Connects to: Admin Panel, Submit Tool. Keyboard shortcuts: ⌘K for Command Palette, Arrow keys for card navigation, Space to select, Enter for actions',
@@ -338,6 +362,14 @@ const screens = [
     description: 'Summary and completion with personalized Browse Tools CTA. Completes profile: UPDATE profiles SET onboarding_completed = true WHERE user_id = auth.uid(). i18n keys: onboarding.step3.title, onboarding.step3.summary, onboarding.complete, onboarding.start_browsing. Connects to: Browse Tools, Onboarding Step 2. Keyboard shortcuts: Enter to complete onboarding, Tab for navigation',
     icon: CheckCircle,
     component: OnboardingStep3Frame,
+    category: 'User Features'
+  },
+  {
+    id: 'profile',
+    title: 'User Profile',
+    description: 'User profile management with personal information, stats, favorites, bookmarks, and account settings. Displays user activity, reviews, and submitted tools. Includes profile editing, password change, and privacy settings.',
+    icon: User,
+    component: UserProfile,
     category: 'User Features'
   },
   {
@@ -453,6 +485,26 @@ const screens = [
     icon: SettingsIcon,
     component: Settings,
     category: 'User Features'
+  },
+  // Admin Pages (Hidden from regular navigation)
+  {
+    id: 'admin-login',
+    title: 'Admin Login',
+    description: 'Admin authentication portal for system administrators',
+    icon: Shield,
+    component: AdminLoginComponent,
+    category: 'Admin',
+    hidden: true // Hide from navigation
+  },
+  {
+    id: 'admin-dashboard',
+    title: 'Admin Dashboard',
+    description: 'Admin control panel for managing tools, users, and system settings',
+    icon: Shield,
+    component: AdminDashboardComponent,
+    category: 'Admin',
+    requiresAdmin: true,
+    hidden: true // Hide from navigation
   }
 ];
 
@@ -485,8 +537,18 @@ function AppContent() {
   const currentScreenData = screens.find(screen => screen.id === currentScreen) || 
                          errorScreens.find(screen => screen.id === currentScreen);
   const CurrentComponent = currentScreenData?.component;
+  
+  // Debug admin navigation
+  if (currentScreen === 'admin-dashboard' || currentScreen === 'admin-login') {
+    console.log('🔍 Admin screen debug:', {
+      currentScreen,
+      currentScreenData,
+      CurrentComponent,
+      hasComponent: !!CurrentComponent
+    });
+  }
 
-  // Global keyboard shortcut for command palette
+  // Global keyboard shortcut for command palette and hash navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
@@ -495,12 +557,40 @@ function AppContent() {
       }
     };
     
+    // Handle hash changes for admin navigation
+    const handleHashChange = () => {
+      const hash = window.location.hash.slice(1); // Remove #
+      console.log('📍 Hash changed to:', hash);
+      
+      if (hash === 'admin-dashboard') {
+        console.log('🎯 Navigating to admin-dashboard via hash');
+        setCurrentScreen('admin-dashboard');
+        setViewMode('app');
+      } else if (hash === 'admin-login') {
+        console.log('🎯 Navigating to admin-login via hash');
+        setCurrentScreen('admin-login');
+        setViewMode('app');
+      }
+    };
+    
     document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('hashchange', handleHashChange);
+    
+    // Check initial hash
+    if (window.location.hash) {
+      handleHashChange();
+    }
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('hashchange', handleHashChange);
+    };
   }, []);
 
   // ENHANCED: Safe navigation with comprehensive validation
   const handleNavigation = (screenId: string, detailView?: string, selectedItem?: any) => {
+    console.log('🚀 handleNavigation called:', { screenId, detailView, selectedItem });
+    
     // SAFETY CHECK: Validate screenId with enhanced logging
     if (!screenId || typeof screenId !== 'string' || screenId.trim() === '') {
       console.error(`Navigation error: Invalid screenId:`, {
@@ -526,6 +616,14 @@ function AppContent() {
         [...screens, ...errorScreens].map(s => s.id));
       // Fallback to explore-frame for unknown screens
       setCurrentScreen('explore-frame');
+      setViewMode('app');
+      return;
+    }
+
+    // Check if admin route requires authentication
+    if ('requiresAdmin' in targetScreen && targetScreen.requiresAdmin && !user) {
+      console.warn('Admin authentication required. Redirecting to admin login.');
+      setCurrentScreen('admin-login');
       setViewMode('app');
       return;
     }
@@ -839,6 +937,10 @@ function AppContent() {
       'onboarding-step-3': (from, params) => {
         navigationLogger.logNavigation(from, 'onboarding-step-3', params);
         handleNavigation('onboarding-step-3', undefined, params);
+      },
+      'profile': (from) => {
+        navigationLogger.logNavigation(from, 'profile');
+        handleNavigation('profile');
       },
       
       // Feature pages
@@ -1260,6 +1362,9 @@ function AppContent() {
           setIsGlobalCommandPaletteOpen(false);
         }}
       />
+
+      {/* Secret Admin Access - Hidden listener for admin access */}
+      <SecretAdminAccess onNavigate={handleNavigation} />
 
       {/* AI Chatbot - Available on all screens */}
       <Suspense fallback={null}>
