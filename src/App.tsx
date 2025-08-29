@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { 
   Home, 
   Search, 
@@ -42,67 +42,70 @@ import { Avatar, AvatarFallback } from './components/ui/avatar';
 import { LogOut, UserCircle } from 'lucide-react';
 
 // Import navigation types for type safety
-import type { 
-  NavigationHandler, 
-  NavigationParams, 
-  NavigationState, 
-  ScreenId, 
-  NavigationTarget,
-  NavigationError,
-  NavigationLog 
-} from './types/navigation';
 
 // Import navigation logger for enhanced debugging
 import { navigationLogger } from './utils/navigationLogger';
+import { logger } from './utils/logger';
 
 // Import navigation components
 import { AppRouter } from './components/navigation/AppRouter';
 import { CommandPalette } from './components/navigation/CommandPalette';
 // import { GlobalNavbarMaster } from './components/navigation/GlobalNavbarMaster';
-import { SimpleNavbar } from './components/navigation/SimpleNavbar';
+// import { SimpleNavbar } from './components/navigation/SimpleNavbar'; // Removed - not needed
 
-// Import all screen components
-import { AIToologistDesignSystem } from './components/design-system/AIToologistDesignSystem';
-import { DesignTokenDocumentation } from './components/design-system/DesignTokenDocumentation';
-import { EnhancedButtonDesignSystem } from './components/design-system/EnhancedButtonDesignSystem';
-import { AIToologistComponents } from './components/ui-library/AIToologistComponents';
-import { AIToologistHome } from './components/home/AIToologistHome';
+// Keep frequently used components
 import { NewModernHome } from './components/home/NewModernHome';
-import { Explore } from './components/explore/Explore';
-import { ExploreFrame } from './components/explore/ExploreFrame';
-import { ToolDetail } from './components/tool-detail/ToolDetail';
-import ComparePage from './components/compare/ComparePage';
-import { ModernDashboard } from './components/tool-wallet/ModernDashboard';
-import { SubmitTool } from './components/submit-tool/SubmitTool';
-import { AdminPanel } from './components/admin/AdminPanel';
-import { ModerationQueue } from './components/admin/ModerationQueue';
-import { AuthOnboarding } from './components/auth/AuthOnboarding';
 import { SignInFrame } from './components/auth/SignInFrame';
-import { ForgotPasswordFrame } from './components/auth/ForgotPasswordFrame';
-import { MagicLinkFrame } from './components/auth/MagicLinkFrame';
-import { TwoFactorFrame } from './components/auth/TwoFactorFrame';
-import { OnboardingStep1Frame } from './components/auth/OnboardingStep1Frame';
-import { OnboardingStep2Frame } from './components/auth/OnboardingStep2Frame';
-import { OnboardingStep3Frame } from './components/auth/OnboardingStep3Frame';
-import { DeveloperHandoff } from './components/developer/DeveloperHandoff';
-import { ThemingI18n } from './components/theming-i18n/ThemingI18n';
-import MicroInteractions from './components/micro-interactions/MicroInteractions';
-import { Tutorials } from './components/tutorials/Tutorials';
-import { TutorialsFrame } from './components/tutorials/TutorialsFrame';
-import { ToolCombinations } from './components/workflows/ToolCombinations';
-import { ToolCombinationsFrame } from './components/workflows/ToolCombinationsFrame';
-import { NewsFrame } from './components/news/NewsFrame';
-import { NewsDetailFrame } from './components/news/NewsDetailFrame';
+import { AuthOnboarding } from './components/auth/AuthOnboarding';
 import { NotFound } from './components/error/NotFound';
 
-// Import individual tool pages
-import { ChatGPTPage, MidjourneyPage, NotionAIPage, GitHubCopilotPage, PerplexityPage, ClaudePage, StableDiffusionPage, RunwayMLPage, GrammarlyPage, FigmaAIPage } from './components/tools';
+// Lazy load all other screen components
+const AIToologistDesignSystem = lazy(() => import('./components/design-system/AIToologistDesignSystem').then(m => ({ default: m.AIToologistDesignSystem })));
+const DesignTokenDocumentation = lazy(() => import('./components/design-system/DesignTokenDocumentation').then(m => ({ default: m.DesignTokenDocumentation })));
+const EnhancedButtonDesignSystem = lazy(() => import('./components/design-system/EnhancedButtonDesignSystem').then(m => ({ default: m.EnhancedButtonDesignSystem })));
+const AIToologistComponents = lazy(() => import('./components/ui-library/AIToologistComponents').then(m => ({ default: m.AIToologistComponents })));
+const AIToologistHome = lazy(() => import('./components/home/AIToologistHome').then(m => ({ default: m.AIToologistHome })));
+const Explore = lazy(() => import('./components/explore/Explore').then(m => ({ default: m.Explore })));
+const ExploreFrame = lazy(() => import('./components/explore/ExploreFrame').then(m => ({ default: m.ExploreFrame })));
+const ToolDetail = lazy(() => import('./components/tool-detail/ToolDetail').then(m => ({ default: m.ToolDetail })));
+const ComparePage = lazy(() => import('./components/compare/ComparePage'));
+const ModernDashboard = lazy(() => import('./components/tool-wallet/ModernDashboard').then(m => ({ default: m.ModernDashboard })));
+const SubmitTool = lazy(() => import('./components/submit-tool/SubmitTool').then(m => ({ default: m.SubmitTool })));
+const AdminPanel = lazy(() => import('./components/admin/AdminPanel').then(m => ({ default: m.AdminPanel })));
+const ModerationQueue = lazy(() => import('./components/admin/ModerationQueue').then(m => ({ default: m.ModerationQueue })));
+const ForgotPasswordFrame = lazy(() => import('./components/auth/ForgotPasswordFrame').then(m => ({ default: m.ForgotPasswordFrame })));
+const MagicLinkFrame = lazy(() => import('./components/auth/MagicLinkFrame').then(m => ({ default: m.MagicLinkFrame })));
+const TwoFactorFrame = lazy(() => import('./components/auth/TwoFactorFrame').then(m => ({ default: m.TwoFactorFrame })));
+const OnboardingStep1Frame = lazy(() => import('./components/auth/OnboardingStep1Frame').then(m => ({ default: m.OnboardingStep1Frame })));
+const OnboardingStep2Frame = lazy(() => import('./components/auth/OnboardingStep2Frame').then(m => ({ default: m.OnboardingStep2Frame })));
+const OnboardingStep3Frame = lazy(() => import('./components/auth/OnboardingStep3Frame').then(m => ({ default: m.OnboardingStep3Frame })));
+const DeveloperHandoff = lazy(() => import('./components/developer/DeveloperHandoff').then(m => ({ default: m.DeveloperHandoff })));
+const ThemingI18n = lazy(() => import('./components/theming-i18n/ThemingI18n').then(m => ({ default: m.ThemingI18n })));
+const MicroInteractions = lazy(() => import('./components/micro-interactions/MicroInteractions'));
+const Tutorials = lazy(() => import('./components/tutorials/Tutorials').then(m => ({ default: m.Tutorials })));
+const TutorialsFrame = lazy(() => import('./components/tutorials/TutorialsFrame').then(m => ({ default: m.TutorialsFrame })));
+const ToolCombinations = lazy(() => import('./components/workflows/ToolCombinations').then(m => ({ default: m.ToolCombinations })));
+const ToolCombinationsFrame = lazy(() => import('./components/workflows/ToolCombinationsFrame').then(m => ({ default: m.ToolCombinationsFrame })));
+const NewsFrame = lazy(() => import('./components/news/NewsFrame').then(m => ({ default: m.NewsFrame })));
+const NewsDetailFrame = lazy(() => import('./components/news/NewsDetailFrame').then(m => ({ default: m.NewsDetailFrame })));
 
-// Import Settings
-import { Settings } from './components/settings/Settings';
+// Lazy load Settings
+const Settings = lazy(() => import('./components/settings/Settings').then(m => ({ default: m.Settings })));
 
-// Import AI Chatbot
-import { AIChatbot } from './components/ai-chatbot/AIChatbot';
+// Lazy load AI Chatbot
+const AIChatbot = lazy(() => import('./components/ai-chatbot/AIChatbot').then(m => ({ default: m.AIChatbot })));
+
+// Lazy load individual tool pages
+const ChatGPTPage = lazy(() => import('./components/tools').then(m => ({ default: m.ChatGPTPage })));
+const MidjourneyPage = lazy(() => import('./components/tools').then(m => ({ default: m.MidjourneyPage })));
+const NotionAIPage = lazy(() => import('./components/tools').then(m => ({ default: m.NotionAIPage })));
+const GitHubCopilotPage = lazy(() => import('./components/tools').then(m => ({ default: m.GitHubCopilotPage })));
+const PerplexityPage = lazy(() => import('./components/tools').then(m => ({ default: m.PerplexityPage })));
+const ClaudePage = lazy(() => import('./components/tools').then(m => ({ default: m.ClaudePage })));
+const StableDiffusionPage = lazy(() => import('./components/tools').then(m => ({ default: m.StableDiffusionPage })));
+const RunwayMLPage = lazy(() => import('./components/tools').then(m => ({ default: m.RunwayMLPage })));
+const GrammarlyPage = lazy(() => import('./components/tools').then(m => ({ default: m.GrammarlyPage })));
+const FigmaAIPage = lazy(() => import('./components/tools').then(m => ({ default: m.FigmaAIPage })));
 
 const screens = [
   {
@@ -663,64 +666,64 @@ function AppContent() {
       // Settings Navigation
       'settings': (from, params) => {
         navigationLogger.logNavigation(from, 'settings', params);
-        handleNavigation('settings', null, params);
+        handleNavigation('settings', undefined, params);
       },
 
       // Design System Navigation
       'design-tokens': (from, params) => {
         navigationLogger.logNavigation(from, 'design-tokens', params);
-        handleNavigation('design-tokens', null, params);
+        handleNavigation('design-tokens', undefined, params);
       },
       'enhanced-buttons': (from, params) => {
         navigationLogger.logNavigation(from, 'enhanced-buttons', params);
-        handleNavigation('enhanced-buttons', null, params);
+        handleNavigation('enhanced-buttons', undefined, params);
       },
 
       // Individual Tool Pages Navigation
       'chatgpt-page': (from, params) => {
         navigationLogger.logNavigation(from, 'chatgpt-page', params);
-        handleNavigation('chatgpt-page', null, params);
+        handleNavigation('chatgpt-page', undefined, params);
       },
       'midjourney-page': (from, params) => {
         navigationLogger.logNavigation(from, 'midjourney-page', params);
-        handleNavigation('midjourney-page', null, params);
+        handleNavigation('midjourney-page', undefined, params);
       },
       'notion-ai-page': (from, params) => {
         navigationLogger.logNavigation(from, 'notion-ai-page', params);
-        handleNavigation('notion-ai-page', null, params);
+        handleNavigation('notion-ai-page', undefined, params);
       },
       'github-copilot-page': (from, params) => {
         navigationLogger.logNavigation(from, 'github-copilot-page', params);
-        handleNavigation('github-copilot-page', null, params);
+        handleNavigation('github-copilot-page', undefined, params);
       },
       'perplexity-page': (from, params) => {
         navigationLogger.logNavigation(from, 'perplexity-page', params);
-        handleNavigation('perplexity-page', null, params);
+        handleNavigation('perplexity-page', undefined, params);
       },
       'claude-page': (from, params) => {
         navigationLogger.logNavigation(from, 'claude-page', params);
-        handleNavigation('claude-page', null, params);
+        handleNavigation('claude-page', undefined, params);
       },
       'stable-diffusion-page': (from, params) => {
         navigationLogger.logNavigation(from, 'stable-diffusion-page', params);
-        handleNavigation('stable-diffusion-page', null, params);
+        handleNavigation('stable-diffusion-page', undefined, params);
       },
       'runway-ml-page': (from, params) => {
         navigationLogger.logNavigation(from, 'runway-ml-page', params);
-        handleNavigation('runway-ml-page', null, params);
+        handleNavigation('runway-ml-page', undefined, params);
       },
       'grammarly-page': (from, params) => {
         navigationLogger.logNavigation(from, 'grammarly-page', params);
-        handleNavigation('grammarly-page', null, params);
+        handleNavigation('grammarly-page', undefined, params);
       },
       'figma-ai-page': (from, params) => {
         navigationLogger.logNavigation(from, 'figma-ai-page', params);
-        handleNavigation('figma-ai-page', null, params);
+        handleNavigation('figma-ai-page', undefined, params);
       },
 
       // Core page navigation
       'tool-detail': (from, params) => {
-        console.log('🔍 App.tsx tool-detail navigation START:', {
+        logger.debug('🔍 App.tsx tool-detail navigation START:', {
           from,
           params,
           paramsKeys: params ? Object.keys(params) : 'no params',
@@ -729,22 +732,22 @@ function AppContent() {
         
         const tool_id = params?.tool_id || params?.toolId || params?.id || 'fallback-tool';
         
-        console.log('🔍 App.tsx tool-detail extracted tool_id:', tool_id);
+        logger.debug('🔍 App.tsx tool-detail extracted tool_id:', tool_id);
         
-        console.log('🔍 App.tsx calling handleNavigation with:', {
+        logger.debug('🔍 App.tsx calling handleNavigation with:', {
           screenId: 'tool-detail',
           detailView: null,
           selectedItem: { ...params, tool_id }
         });
         
         navigationLogger.logNavigation(from, 'tool-detail', { tool_id, params });
-        handleNavigation('tool-detail', null, { ...params, tool_id });
+        handleNavigation('tool-detail', undefined, { ...params, tool_id });
       },
       
       // Frame navigation
       'explore-frame': (from, params) => {
         navigationLogger.logNavigation(from, 'explore-frame', params);
-        handleNavigation('explore-frame', null, params);
+        handleNavigation('explore-frame', undefined, params);
       },
       'tutorials-frame': (from) => {
         navigationLogger.logNavigation(from, 'tutorials-frame');
@@ -756,14 +759,14 @@ function AppContent() {
       },
       'news-detail': (from, params) => {
         navigationLogger.logNavigation(from, 'news-detail', params);
-        handleNavigation('news-detail', null, params);
+        handleNavigation('news-detail', undefined, params);
       },
       
       // Blog redirect - FIX FOR ERRORS
       'blog': (from, params) => {
-        console.warn(`🔄 Blog redirect: ${from} → news (blog has been replaced with news)`);
+        logger.warn(`🔄 Blog redirect: ${from} → news (blog has been replaced with news)`);
         navigationLogger.logNavigation(from, 'news', { redirect: 'blog-to-news', ...params });
-        handleNavigation('news', null, params);
+        handleNavigation('news', undefined, params);
       },
       
       // Tutorial detail navigation
@@ -831,11 +834,11 @@ function AppContent() {
       },
       'onboarding-step-2': (from, params) => {
         navigationLogger.logNavigation(from, 'onboarding-step-2', params);
-        handleNavigation('onboarding-step-2', null, params);
+        handleNavigation('onboarding-step-2', undefined, params);
       },
       'onboarding-step-3': (from, params) => {
         navigationLogger.logNavigation(from, 'onboarding-step-3', params);
-        handleNavigation('onboarding-step-3', null, params);
+        handleNavigation('onboarding-step-3', undefined, params);
       },
       
       // Feature pages
@@ -854,15 +857,15 @@ function AppContent() {
       
       // UPDATED: Compare navigation now redirects to tools with compare mode
       'compare': (from, params) => {
-        console.log(`🔄 Compare redirect: ${from} → explore-frame (compare is now integrated into tools page)`);
+        logger.info(`🔄 Compare redirect: ${from} → explore-frame (compare is now integrated into tools page)`);
         navigationLogger.logNavigation(from, 'explore-frame', { redirect: 'compare', mode: 'compare', ...params });
         // Navigate to explore-frame and let it handle the compare mode
-        handleNavigation('explore-frame', null, { mode: 'compare', ...params });
+        handleNavigation('explore-frame', undefined, { mode: 'compare', ...params });
       },
       'compare-tools': (from, params) => {
-        console.log(`🔄 Compare Tools redirect: ${from} → explore-frame (compare is now integrated into tools page)`);
+        logger.info(`🔄 Compare Tools redirect: ${from} → explore-frame (compare is now integrated into tools page)`);
         navigationLogger.logNavigation(from, 'explore-frame', { redirect: 'compare-tools', mode: 'compare', ...params });
-        handleNavigation('explore-frame', null, { mode: 'compare', ...params });
+        handleNavigation('explore-frame', undefined, { mode: 'compare', ...params });
       },
       
       'wallet': (from, params) => {
@@ -894,14 +897,14 @@ function AppContent() {
         handleNavigation('tutorials-frame');
       },
       'workflows': (from, params) => {
-        console.log(`🔄 Workflows redirect: ${from} → tutorials-frame (workflows is now integrated into tutorials page)`);
+        logger.info(`🔄 Workflows redirect: ${from} → tutorials-frame (workflows is now integrated into tutorials page)`);
         navigationLogger.logNavigation(from, 'tutorials-frame', { redirect: 'workflows', mode: 'workflows', ...params });
-        handleNavigation('tutorials-frame', null, { mode: 'workflows', ...params });
+        handleNavigation('tutorials-frame', undefined, { mode: 'workflows', ...params });
       },
       'tool-combinations-frame': (from, params) => {
-        console.log(`🔄 Tool Combinations redirect: ${from} → tutorials-frame (workflows is now integrated into tutorials page)`);
+        logger.info(`🔄 Tool Combinations redirect: ${from} → tutorials-frame (workflows is now integrated into tutorials page)`);
         navigationLogger.logNavigation(from, 'tutorials-frame', { redirect: 'tool-combinations-frame', mode: 'workflows', ...params });
-        handleNavigation('tutorials-frame', null, { mode: 'workflows', ...params });
+        handleNavigation('tutorials-frame', undefined, { mode: 'workflows', ...params });
       },
       
       // Back navigation
@@ -997,22 +1000,6 @@ function AppContent() {
     }
   };
 
-  const handleGlobalCommandPaletteNavigate = (screenId: string) => {
-    handleNavigation(screenId);
-    setIsGlobalCommandPaletteOpen(false);
-  };
-
-  const handleLogout = () => {
-    // Reset authentication state
-    setIsAuthenticated(false);
-    // Navigate to modern home page
-    handleNavigation('modern-home');
-    // In a real app, this would also:
-    // - Clear tokens from localStorage/sessionStorage
-    // - Call logout API endpoint
-    // - Clear user data from state
-    console.log('User logged out successfully');
-  };
 
   // App Router View
   if (viewMode === 'router') {
@@ -1020,10 +1007,9 @@ function AppContent() {
       <>
         <Toaster position="bottom-right" />
         <div id="app-root" className="relative min-h-screen" style={{ backgroundColor: '#E9E3DF' }}>
-          {/* Use SimpleNavbar for testing */}
-        <SimpleNavbar onNavigate={(from, to) => handleNavigation(to)} />
+          {/* SimpleNavbar removed - each page has its own navigation */}
         
-        <AppRouter onNavigateToScreen={(toScreen, params) => handleNavigation(toScreen, undefined, params)} />
+        <AppRouter onNavigateToScreen={(toScreen: string, params: any) => handleNavigation(toScreen, undefined, params)} />
         
         {/* Global Command Palette for Router View */}
         <CommandPalette 
@@ -1242,15 +1228,25 @@ function AppContent() {
               selectedItemKeys: navigationState.selectedItem ? Object.keys(navigationState.selectedItem) : 'no selectedItem'
             })}
             
-            <CurrentComponent
-              onNavigate={handleCrossScreenNavigation}
-              currentScreen={currentScreen}
-              isAuthenticated={isAuthenticated}
-              navigationState={navigationState.detailView}
-              selectedItem={navigationState.selectedItem}
-              detailView={navigationState.detailView ? true : undefined}
-              params={navigationState.selectedItem} // Pass params for ToolDetail component
-            />
+            {CurrentComponent && (
+              <Suspense fallback={
+                <div className="min-h-screen flex items-center justify-center">
+                  <div className="space-y-4 text-center">
+                    <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
+                    <p className="text-gray-600">Loading...</p>
+                  </div>
+                </div>
+              }>
+                <CurrentComponent
+                  onNavigate={handleCrossScreenNavigation as any}
+                  currentScreen={currentScreen}
+                  isAuthenticated={isAuthenticated}
+                  navigationState={navigationState as any}
+                  selectedItem={navigationState.selectedItem}
+                  params={navigationState.selectedItem} // Pass params for ToolDetail component
+                />
+              </Suspense>
+            )}
           </>
         )}
       </main>
@@ -1259,14 +1255,16 @@ function AppContent() {
       <CommandPalette 
         isOpen={isGlobalCommandPaletteOpen}
         onClose={() => setIsGlobalCommandPaletteOpen(false)}
-        onNavigate={(from, to) => {
+        onNavigate={(_from: string, to: string) => {
           handleNavigation(to);
           setIsGlobalCommandPaletteOpen(false);
         }}
       />
 
       {/* AI Chatbot - Available on all screens */}
-      <AIChatbot />
+      <Suspense fallback={null}>
+        <AIChatbot />
+      </Suspense>
     </div>
     </>
   );

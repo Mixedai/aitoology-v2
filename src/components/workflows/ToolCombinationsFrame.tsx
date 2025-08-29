@@ -11,7 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Progress } from '../ui/progress';
 import { Checkbox } from '../ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Switch } from '../ui/switch';
+// import { Switch } from '../ui/switch';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -21,14 +21,6 @@ import {
   Filter,
   Eye,
   Edit3,
-  MoreHorizontal,
-  Users,
-  Star,
-  Heart,
-  Clock,
-  Zap,
-  Workflow,
-  Home,
   X,
   ChevronDown,
   ChevronLeft,
@@ -36,36 +28,28 @@ import {
   Sparkles,
   Save,
   Rocket,
-  XCircle,
-  RotateCcw,
   Layers,
   Grid3X3,
   List,
-  GitBranch,
-  Copy,
-  Bookmark,
-  Award,
-  TrendingUp,
   Wand2,
   Upload,
-  Target,
-  ZoomIn,
-  ZoomOut,
-  Check
+  Check,
+  Home,
+  Workflow
 } from 'lucide-react';
 
 // Import types and utilities
-import type { NavigationProps, WizardState, Workflow as WorkflowModel, Tool } from './types';
-import { workflowCategories, sortOptions, WIZARD_STEPS } from './constants';
+import type { NavigationProps, WizardState, Workflow as WorkflowModel } from './types';
+import { workflowCategories, sortOptions } from './constants';
 import { availableTools, mockWorkflows } from './mockData';
-import { generateNodeId, generateConnectionId, createNewNode, getStepTitle, getStepDescription } from './utils';
+import { createNewNode, getStepTitle, getStepDescription } from './utils';
 import { WizardStep1 } from './wizardSteps/WizardStep1';
 
-export function ToolCombinationsFrame({ onNavigate, currentScreen, selectedItem, detailView, navigationState }: NavigationProps) {
+export function ToolCombinationsFrame({ onNavigate, currentScreen, selectedItem, detailView }: NavigationProps) {
   // Core state
   const [workflows, setWorkflows] = useState<WorkflowModel[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
   
   // Filter and search state
   const [searchQuery, setSearchQuery] = useState('');
@@ -817,7 +801,7 @@ export function ToolCombinationsFrame({ onNavigate, currentScreen, selectedItem,
                       <Checkbox
                         id="featured"
                         checked={showFeaturedOnly}
-                        onCheckedChange={setShowFeaturedOnly}
+                        onCheckedChange={(checked) => setShowFeaturedOnly(checked === true)}
                       />
                       <label htmlFor="featured" className="text-sm">Featured Only</label>
                     </div>
@@ -825,7 +809,7 @@ export function ToolCombinationsFrame({ onNavigate, currentScreen, selectedItem,
                       <Checkbox
                         id="verified"
                         checked={showVerifiedOnly}
-                        onCheckedChange={setShowVerifiedOnly}
+                        onCheckedChange={(checked) => setShowVerifiedOnly(checked === true)}
                       />
                       <label htmlFor="verified" className="text-sm">Verified Authors</label>
                     </div>

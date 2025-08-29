@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+// import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Badge } from '../ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Alert, AlertDescription } from '../ui/alert';
 import { toast } from 'sonner';
 import { 
@@ -100,25 +99,25 @@ const systemStats = {
 };
 
 export function AdminPanel() {
-  const [selectedSubmission, setSelectedSubmission] = useState(null);
-  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  // const [selectedSubmission, setSelectedSubmission] = useState(null);
+  // const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
-  const handleApproveSubmission = (id: number) => {
+  const handleApproveSubmission = (_id: number) => {
     toast.success('Tool submission approved and published');
     // Update submission status
   };
 
-  const handleRejectSubmission = (id: number) => {
+  const handleRejectSubmission = (_id: number) => {
     toast.error('Tool submission rejected');
     // Update submission status
   };
 
-  const handleDeleteUser = (id: number) => {
+  const handleDeleteUser = (_id: number) => {
     toast.success('User deleted successfully');
     // Delete user
   };
 
-  const handleChangeUserRole = (id: number, newRole: string) => {
+  const handleChangeUserRole = (_id: number, newRole: string) => {
     toast.success(`User role changed to ${newRole}`);
     // Update user role
   };

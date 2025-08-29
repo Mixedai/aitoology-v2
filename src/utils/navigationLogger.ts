@@ -87,7 +87,7 @@ class NavigationLogger {
   }
 
   // Analyze error patterns for debugging
-  private analyzeErrorPatterns(error: NavigationError): void {
+  private analyzeErrorPatterns(_error: NavigationError): void {
     const recentErrors = this.logs
       .filter(log => !log.success && log.timestamp > new Date(Date.now() - 60000).toISOString())
       .slice(-5);
@@ -330,13 +330,13 @@ export const createSafeNavigationHandler = (
     try {
       onNavigate(currentScreen, sanitizedToScreen, params);
     } catch (_error) {
-      console.error(`❌ ${componentName}: Navigation callback failed:`, error);
+      console.error(`❌ ${componentName}: Navigation callback failed:`, _error);
       navigationLogger.logError(
         navigationLogger.createError(
           'handler_error',
           currentScreen,
           sanitizedToScreen,
-          error instanceof Error ? error : new Error('Navigation callback failed'),
+          _error instanceof Error ? _error : new Error('Navigation callback failed'),
           { params, component: componentName }
         )
       );

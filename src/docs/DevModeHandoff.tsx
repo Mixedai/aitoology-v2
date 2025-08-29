@@ -369,7 +369,7 @@ export function DevModeHandoff() {
               </div>
               
               <div className="grid gap-4">
-                {tailwindSpacing.map((spacing, index) => (
+                {tailwindSpacing.map((spacing, _index) => (
                   <div key={spacing.class} className="flex items-center justify-between p-4 border rounded-lg bg-background">
                     <div className="flex items-center gap-4">
                       <code className="bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded font-mono text-sm">
@@ -401,7 +401,7 @@ export function DevModeHandoff() {
               </div>
               
               <div className="grid gap-4">
-                {tailwindColors.map((color, index) => (
+                {tailwindColors.map((color, _index) => (
                   <div key={color.class} className="flex items-center justify-between p-4 border rounded-lg bg-background">
                     <div className="flex items-center gap-4">
                       <div className="flex items-center gap-2">

@@ -1,8 +1,11 @@
 import { createRoot } from "react-dom/client";
-import React from "react";
+// import React from "react";
 import "./index.css";
+// Use main App instead of lazy loaded version
 import App from "./App";
 import { setupGlobalErrorHandlers, cleanupBrowserExtensions } from "./utils/errorHandler";
+import { GlobalErrorBoundary } from "./components/ErrorBoundary/GlobalErrorBoundary";
+import { initializePerformanceMonitoring } from "./utils/performance";
 
 // Set up global error handlers before anything else
 setupGlobalErrorHandlers();
@@ -10,7 +13,10 @@ setupGlobalErrorHandlers();
 // Clean up browser extension artifacts
 cleanupBrowserExtensions();
 
-function ErrorFallback({ error }: { error: Error }) {
+// Initialize performance monitoring
+initializePerformanceMonitoring();
+
+function ErrorFallback({ error }: { error: Error }) { // eslint-disable-line @typescript-eslint/no-unused-vars
   return (
     <div className="min-h-screen bg-red-50 flex items-center justify-center p-4">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-2xl w-full">
@@ -29,31 +35,31 @@ function ErrorFallback({ error }: { error: Error }) {
   );
 }
 
-class ErrorBoundary extends React.Component<
-  { children: React.ReactNode },
-  { hasError: boolean; error: Error | null }
-> {
-  constructor(props: { children: React.ReactNode }) {
-    super(props);
-    this.state = { hasError: false, error: null };
-  }
+// class ErrorBoundary extends React.Component<
+//   { children: React.ReactNode },
+//   { hasError: boolean; error: Error | null }
+// > {
+//   constructor(props: { children: React.ReactNode }) {
+//     super(props);
+//     this.state = { hasError: false, error: null };
+//   }
 
-  static getDerivedStateFromError(error: Error) {
-    return { hasError: true, error };
-  }
+//   static getDerivedStateFromError(error: Error) {
+//     return { hasError: true, error };
+//   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error("App Error:", error, errorInfo);
-  }
+//   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+//     console.error("App Error:", error, errorInfo);
+//   }
 
-  render() {
-    if (this.state.hasError && this.state.error) {
-      return <ErrorFallback error={this.state.error} />;
-    }
+//   render() {
+//     if (this.state.hasError && this.state.error) {
+//       return <ErrorFallback error={this.state.error} />;
+//     }
 
-    return this.props.children;
-  }
-}
+//     return this.props.children;
+//   }
+// }
 
 // Store root to prevent duplicate creation
 const container = document.getElementById("root");
@@ -67,7 +73,7 @@ if (!root) {
 }
 
 root.render(
-  <ErrorBoundary>
+  <GlobalErrorBoundary>
     <App />
-  </ErrorBoundary>
+  </GlobalErrorBoundary>
 );

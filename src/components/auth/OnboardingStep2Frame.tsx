@@ -95,7 +95,7 @@ export function OnboardingStep2Frame({
 
   const handleNext = () => {
     if (onNavigate) {
-      onNavigate('onboarding-step-2', 'onboarding-step-3', { 
+      onNavigate('onboarding-step-3', { 
         ...initialData,
         notificationPreferences: preferences 
       });
@@ -108,7 +108,7 @@ export function OnboardingStep2Frame({
     }
   };
 
-  const renderPreferenceItem = (preference: NotificationPreference, variant: string) => {
+  const renderPreferenceItem = (preference: NotificationPreference, _variant: string) => {
     const isEnabled = preferences[preference.id];
     const IconComponent = preference.icon;
     

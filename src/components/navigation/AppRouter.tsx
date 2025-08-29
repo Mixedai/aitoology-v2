@@ -37,7 +37,7 @@ import {
 } from 'lucide-react';
 
 interface AppRouterProps {
-  onNavigateToScreen: (screenId: string) => void;
+  onNavigateToScreen: (screenId: string, params?: any) => void;
 }
 
 /*

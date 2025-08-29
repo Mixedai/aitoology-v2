@@ -6,7 +6,7 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta http-equiv="Content-Security-Policy" content="
       default-src 'self';
-      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://localhost:* http://localhost:*;
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://localhost:* http://localhost:* https://unpkg.com https://cdn.jsdelivr.net;
       style-src 'self' 'unsafe-inline';
       img-src 'self' data: blob: https: http:;
       font-src 'self' data:;
@@ -16,9 +16,59 @@
       base-uri 'self';
     ">
     <title>Aitoologist - Discover & Compare AI Tools</title>
+    
+    <!-- Preconnect to CDNs for better performance -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://unpkg.com">
+    
+    <!-- DNS Prefetch -->
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://unpkg.com">
+    
+    <!-- Critical CSS for initial load -->
+    <style>
+      body { margin: 0; font-family: system-ui, -apple-system, sans-serif; }
+      #root { min-height: 100vh; }
+      .initial-loader {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        z-index: 9999;
+      }
+      .initial-loader.hide { opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="initial-loader" id="loader">
+        <div style="text-align: center; color: white;">
+          <div style="width: 50px; height: 50px; border: 3px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+          <h2>AI Toologist</h2>
+          <p>Loading...</p>
+        </div>
+      </div>
+    </div>
+    
+    <style>
+      @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+    
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Hide loader when app is ready -->
+    <script>
+      window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+          const loader = document.getElementById('loader');
+          if (loader) {
+            loader.classList.add('hide');
+            setTimeout(() => loader.remove(), 300);
+          }
+        }, 100);
+      });
+    </script>
   </body>
 </html>

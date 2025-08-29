@@ -104,7 +104,7 @@ export function setupGlobalErrorHandlers() {
     const xhr = new OriginalXHR();
     const originalOpen = xhr.open;
     
-    xhr.open = function(method: string, url: string, ...rest: any[]) {
+    xhr.open = function(method: string, url: string, async?: boolean, user?: string | null, password?: string | null) {
       // Check if it's a third-party request
       const isThirdPartyRequest = suppressedDomains.some(domain => 
         url.includes(domain)
@@ -118,7 +118,7 @@ export function setupGlobalErrorHandlers() {
         });
       }
       
-      return originalOpen.call(xhr, method, url, ...rest);
+      return originalOpen.call(xhr, method, url, async, user, password);
     };
     
     return xhr;

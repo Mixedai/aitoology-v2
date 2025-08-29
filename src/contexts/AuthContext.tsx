@@ -7,7 +7,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, metadata?: any) => Promise<void>;
+  signUp: (email: string, password: string, metadata?: any) => Promise<any>;
   signIn: (email: string, password: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   signInWithGithub: () => Promise<void>;
@@ -85,12 +85,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           console.log('Email confirmation required');
           toast.warning('Please check your email to verify your account.');
         }
+        
+        return data;
       } else {
         console.error('No user data returned from sign up');
         throw new Error('Sign up failed - no user data returned');
       }
-      
-      return data;
     } catch (error: any) {
       console.error('Sign up error:', error);
       toast.error(error.message || 'Failed to sign up');

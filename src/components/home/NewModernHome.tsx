@@ -5,6 +5,7 @@ import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { HeroSection2 } from "./HeroSection2";
 import { HeroSection3 } from "./HeroSection3";
+import { CompactGettingStarted } from "./CompactGettingStarted";
 import { useAuth } from '@/contexts/AuthContext';
 import { UserMenu } from '../navigation/UserMenu';
 import { 
@@ -192,69 +193,77 @@ const AppGuide = ({ onNavigate }: { onNavigate?: (from: string, to: string, para
     {
       id: 1,
       icon: Search,
-      title: "1. Keşfet",
-      subtitle: "500+ AI Aracını Keşfet",
-      description: "Kategorilere göre düzenlenmiş yüzlerce AI aracını keşfedin. ChatGPT, Midjourney, Claude ve daha fazlası tek platformda.",
-      features: ["20+ Kategori", "Detaylı Açıklamalar", "Kullanım Örnekleri"],
-      action: "Araçları Keşfet",
+      title: "Discover",
+      subtitle: "Explore 500+ AI Tools",
+      description: "Browse hundreds of AI tools organized by categories. ChatGPT, Midjourney, Claude, and more - all in one platform.",
+      features: ["20+ Categories", "Detailed Reviews", "Use Cases"],
+      action: "Explore Tools",
       actionId: "explore-frame",
-      stepNumber: "Adım 1",
-      highlight: "500+ AI Aracı",
+      stepNumber: "Step 1",
+      highlight: "500+ AI Tools",
       gradient: "from-blue-500 via-indigo-600 to-purple-700",
       bgGradient: "from-blue-50 via-indigo-50 to-purple-50",
       iconBg: "from-blue-500 to-indigo-600",
+      animatedIcon: "🔍",
+      glow: "shadow-blue-500/50",
       delay: 0,
       unlocked: true
     },
     {
       id: 2,
       icon: GitCompare,
-      title: "2. Karşılaştır",
-      subtitle: "En İyi Aracı Bul",
-      description: "İhtiyacınıza uygun AI aracını bulmak için yan yana karşılaştırma yapın. Fiyat, özellikler ve kullanım alanlarını karşılaştırın.",
-      features: ["Yan Yana Karşılaştırma", "Fiyat Analizi", "Özellik Matrisi"],
-      action: "Karşılaştır",
+      title: "Compare",
+      subtitle: "Find Your Perfect Match",
+      description: "Compare AI tools side-by-side to find the perfect fit. Analyze pricing, features, and capabilities at a glance.",
+      features: ["Side-by-Side", "Price Analysis", "Feature Matrix"],
+      action: "Compare Now",
       actionId: "explore-frame",
       actionParams: { mode: "compare" },
-      stepNumber: "Adım 2",
-      highlight: "Akıllı Karşılaştırma",
+      stepNumber: "Step 2",
+      highlight: "Smart Comparison",
       gradient: "from-emerald-500 via-teal-600 to-cyan-700",
       bgGradient: "from-emerald-50 via-teal-50 to-cyan-50",
       iconBg: "from-emerald-500 to-teal-600",
+      animatedIcon: "⚡",
+      glow: "shadow-emerald-500/50",
       delay: 0.2,
       unlocked: true
     },
     {
       id: 3,
       icon: Bookmark,
-      title: "3. Kaydet",
-      subtitle: "Kişisel Cüzdanını Oluştur",
-      description: "Favori AI araçlarınızı kaydedin ve kişiselleştirilmiş AI cüzdanınızı oluşturun. Tüm araçlarınız tek yerde.",
-      features: ["Kişisel Cüzdan", "Kategorilere Ayır", "Hızlı Erişim"],
-      action: "Cüzdanım",
+      title: "Save",
+      subtitle: "Build Your AI Wallet",
+      description: "Save your favorite AI tools and create your personalized AI wallet. All your tools in one secure place.",
+      features: ["Personal Wallet", "Collections", "Quick Access"],
+      action: "My Wallet",
       actionId: "wallet",
-      stepNumber: "Adım 3",
-      highlight: "AI Cüzdanı",
+      stepNumber: "Step 3",
+      highlight: "AI Wallet",
       gradient: "from-purple-500 via-pink-600 to-rose-700",
       bgGradient: "from-purple-50 via-pink-50 to-rose-50",
       iconBg: "from-purple-500 to-pink-600",
+      animatedIcon: "💎",
+      glow: "shadow-purple-500/50",
       delay: 0.4,
       unlocked: true
     },
     {
       id: 4,
       icon: BarChart3,
-      title: "4. Takip Et",
-      subtitle: "Kullanımını Optimize Et",
-      description: "AI araçlarının kullanım istatistiklerini takip edin. Hangi aracı ne kadar kullandığınızı görün ve verimliliğinizi artırın.",
-      features: ["Kullanım İstatistikleri", "Maliyet Takibi", "Verimlilik Raporu"],
-      action: "İstatistikler",
+      title: "Track",
+      subtitle: "Optimize Your Workflow",
+      description: "Monitor your AI tool usage with detailed analytics. Track costs, measure efficiency, and optimize your workflow.",
+      features: ["Usage Analytics", "Cost Tracking", "Performance"],
+      action: "View Stats",
       actionId: "stats",
-      stepNumber: "Adım 4",
-      highlight: "Akıllı Takip",
+      stepNumber: "Step 4",
+      highlight: "Smart Analytics",
       gradient: "from-orange-500 via-red-600 to-pink-700",
       bgGradient: "from-orange-50 via-red-50 to-pink-50",
       iconBg: "from-orange-500 to-red-600",
+      animatedIcon: "📊",
+      glow: "shadow-orange-500/50",
       delay: 0.6,
       unlocked: true
     }
@@ -270,7 +279,12 @@ const AppGuide = ({ onNavigate }: { onNavigate?: (from: string, to: string, para
   };
 
   return (
-    <section className="min-h-screen py-32 px-6 relative overflow-hidden bg-black flex items-center">
+    <>
+    {/* Compact Getting Started Guide Component */}
+    <CompactGettingStarted onNavigate={onNavigate} />
+    
+    {/* Original Getting Started Section (Hidden for now) */}
+    <section className="min-h-screen py-32 px-6 relative overflow-hidden bg-black flex items-center" style={{ display: 'none' }}>
       {/* Dark gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-purple-950 via-black to-blue-950"></div>
       
@@ -366,22 +380,26 @@ const AppGuide = ({ onNavigate }: { onNavigate?: (from: string, to: string, para
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6 }}
           >
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full px-6 py-2 shadow-lg">
-              <span className="text-lg">📚</span>
-              <span className="font-semibold text-sm">AIToologist Kullanım Rehberi</span>
-              <span className="text-lg">🚀</span>
-            </div>
+            {/* Badge with premium animation */}
+            <motion.div 
+              className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full px-8 py-3 shadow-2xl backdrop-blur-xl border border-white/20"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            >
+              <span className="text-xl animate-pulse">✨</span>
+              <span className="font-bold text-sm uppercase tracking-wider">Getting Started Guide</span>
+              <span className="text-xl animate-bounce">🚀</span>
+            </motion.div>
             
-            {/* Title */}
-            <h2 className="text-3xl md:text-4xl font-black">
-              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                Nasıl Çalışır?
+            {/* Enhanced Title */}
+            <h2 className="text-4xl md:text-5xl font-black">
+              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-2xl">
+                How It Works
               </span>
             </h2>
             
-            <p className="text-base text-gray-300 max-w-2xl mx-auto">
-              4 basit adımda tüm AI araçlarını keşfedin, karşılaştırın ve yönetin
+            <p className="text-lg text-gray-200 max-w-2xl mx-auto font-medium">
+              Master AI tools in 4 simple steps - Discover, Compare, Save & Track
             </p>
           </motion.div>
 
@@ -521,79 +539,122 @@ const AppGuide = ({ onNavigate }: { onNavigate?: (from: string, to: string, para
                     index % 2 === 0 ? 'mr-auto ml-20' : 'ml-auto mr-20'
                   }`}
                 >
-                {/* Basic Quest Card */}
+                {/* Enhanced Premium Card */}
                 <div className="relative">
                   <motion.div
-                    className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6 hover:bg-white/15 transition-all duration-300"
-                    whileHover={{ scale: 1.02, y: -5 }}
-                    transition={{ type: "spring", stiffness: 300 }}
+                    className={`relative bg-gradient-to-br from-gray-900/80 via-black/90 to-gray-900/80 backdrop-blur-2xl rounded-3xl border-2 p-6 transition-all duration-500 ${
+                      activeStep === index + 1 
+                        ? 'border-purple-500/60 shadow-2xl shadow-purple-500/30' 
+                        : 'border-white/10 hover:border-white/30 shadow-xl hover:shadow-2xl'
+                    }`}
+                    whileHover={{ scale: 1.05, y: -8 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 20 }}
                   >
-                    {/* Quest Level Badge */}
-                    <div className="absolute -top-3 right-4">
-                      <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-0 px-3 py-1 text-xs font-bold">
-                        {step.questLevel}
-                      </Badge>
-                    </div>
+                    {/* Animated background glow */}
+                    <motion.div 
+                      className={`absolute -inset-1 rounded-3xl bg-gradient-to-r ${step.gradient} opacity-20 blur-xl`}
+                      animate={{ opacity: [0.1, 0.3, 0.1] }}
+                      transition={{ duration: 3, repeat: Infinity }}
+                    />
                     
-                    {/* Status Indicator */}
-                    <div className="absolute top-4 left-4">
+                    {/* Step Badge */}
+                    <div className="absolute -top-3 right-6">
                       <motion.div 
-                        className={`w-3 h-3 rounded-full ${
-                          activeStep > index + 1 ? 'bg-green-500' : 
-                          activeStep === index + 1 ? 'bg-yellow-500' : 
-                          'bg-gray-500'
-                        }`}
-                        animate={activeStep === index + 1 ? { 
-                          scale: [1, 1.3, 1],
-                          opacity: [1, 0.6, 1] 
-                        } : {}}
-                        transition={{ duration: 2, repeat: Infinity }}
-                      />
-                    </div>
-                    
-                    {/* Icon */}
-                    <div className="flex justify-center mb-4">
-                      <motion.div 
-                        className={`w-16 h-16 bg-gradient-to-br ${step.iconBg} rounded-xl flex items-center justify-center shadow-lg`}
-                        whileHover={{ rotate: 10 }}
+                        className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg"
+                        whileHover={{ scale: 1.1 }}
                       >
-                        <step.icon className="w-8 h-8 text-white" />
+                        {step.stepNumber}
                       </motion.div>
                     </div>
                     
-                    {/* Title & Subtitle */}
-                    <h3 className="text-xl font-bold text-white mb-1 text-center">{step.title}</h3>
-                    <p className="text-sm text-gray-300 mb-2 text-center">{step.subtitle}</p>
+                    {/* Status Indicator with pulse */}
+                    <div className="absolute top-4 left-4">
+                      <div className="relative">
+                        <motion.div 
+                          className={`w-3 h-3 rounded-full ${
+                            activeStep > index + 1 ? 'bg-green-400' : 
+                            activeStep === index + 1 ? 'bg-yellow-400' : 
+                            'bg-gray-400'
+                          }`}
+                          animate={activeStep === index + 1 ? { 
+                            scale: [1, 1.5, 1],
+                          } : {}}
+                          transition={{ duration: 2, repeat: Infinity }}
+                        />
+                        {activeStep === index + 1 && (
+                          <div className="absolute inset-0 w-3 h-3 bg-yellow-400 rounded-full animate-ping" />
+                        )}
+                      </div>
+                    </div>
                     
-                    {/* Highlight */}
-                    <p className="text-xs text-purple-400 font-semibold mb-3 text-center">{step.highlight}</p>
+                    {/* Enhanced Icon with animation */}
+                    <div className="flex justify-center mb-5">
+                      <motion.div 
+                        className={`relative w-20 h-20 bg-gradient-to-br ${step.iconBg} rounded-2xl flex items-center justify-center shadow-2xl`}
+                        whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
+                        transition={{ duration: 0.5 }}
+                      >
+                        <span className="text-3xl drop-shadow-lg">{step.animatedIcon}</span>
+                        <div className="absolute inset-0 rounded-2xl bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
+                      </motion.div>
+                    </div>
                     
-                    {/* Description */}
-                    <p className="text-sm text-gray-400 mb-4 text-center line-clamp-3">
+                    {/* Enhanced Title */}
+                    <h3 className="text-2xl font-black text-transparent bg-gradient-to-r from-white to-gray-300 bg-clip-text mb-2 text-center">
+                      {step.title}
+                    </h3>
+                    <p className="text-sm text-gray-300 mb-3 text-center font-medium">{step.subtitle}</p>
+                    
+                    {/* Premium Highlight Badge */}
+                    <div className="flex justify-center mb-4">
+                      <div className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full border border-purple-500/30">
+                        <Sparkles className="w-3 h-3 text-purple-400" />
+                        <span className="text-xs text-purple-300 font-bold uppercase tracking-wider">{step.highlight}</span>
+                      </div>
+                    </div>
+                    
+                    {/* Description with better readability */}
+                    <p className="text-sm text-gray-200 mb-5 text-center leading-relaxed px-2">
                       {step.description}
                     </p>
                     
-                    {/* Rewards Section */}
-                    <div className="bg-black/30 rounded-lg p-3 mb-4">
-                      <p className="text-xs text-gray-400 uppercase tracking-wider mb-2 text-center">Rewards</p>
+                    {/* Enhanced Features Section */}
+                    <div className="bg-gradient-to-b from-black/40 to-black/60 rounded-2xl p-3 mb-5 backdrop-blur-xl border border-white/10">
                       <div className="flex flex-wrap gap-2 justify-center">
-                        {step.features.slice(0, 2).map((feature, idx) => (
-                          <span key={idx} className="text-xs bg-white/10 text-gray-300 px-2 py-1 rounded border border-white/20">
-                            {feature}
-                          </span>
+                        {step.features.map((feature, idx) => (
+                          <motion.span 
+                            key={idx} 
+                            className="text-xs bg-gradient-to-r from-white/10 to-white/5 text-gray-200 px-3 py-1.5 rounded-full border border-white/20 font-medium"
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: idx * 0.1 }}
+                            whileHover={{ scale: 1.05 }}
+                          >
+                            ✓ {feature}
+                          </motion.span>
                         ))}
                       </div>
                     </div>
                     
-                    {/* Action Button */}
-                    <Button
-                      onClick={() => handleStepAction(step.actionId, step.actionParams)}
-                      className={`w-full bg-gradient-to-r ${step.gradient} hover:shadow-lg transition-all duration-200 text-white border-0 rounded-lg font-semibold`}
-                      disabled={false}
-                    >
-                      <span>{step.action}</span>
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
+                    {/* Enhanced Action Button */}
+                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                      <Button
+                        onClick={() => handleStepAction(step.actionId, step.actionParams)}
+                        className={`relative w-full bg-gradient-to-r ${step.gradient} hover:shadow-2xl transition-all duration-300 text-white border-0 rounded-2xl font-bold py-3 text-sm uppercase tracking-wider overflow-hidden group`}
+                        disabled={false}
+                      >
+                        <span className="relative z-10 flex items-center justify-center gap-2">
+                          {step.action}
+                          <motion.div
+                            animate={{ x: [0, 4, 0] }}
+                            transition={{ duration: 1.5, repeat: Infinity }}
+                          >
+                            <ArrowRight className="w-4 h-4" />
+                          </motion.div>
+                        </span>
+                        <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
+                      </Button>
+                    </motion.div>
                   </motion.div>
                 </div>
                 </div>
@@ -604,6 +665,7 @@ const AppGuide = ({ onNavigate }: { onNavigate?: (from: string, to: string, para
         </motion.div>
       </div>
     </section>
+    </>
   );
 };
 
@@ -904,19 +966,19 @@ export function NewModernHome({ onNavigate }: NewModernHomeProps) {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Navigation Header */}
-      <header className="fixed top-0 left-0 right-0 z-50">
-        <div className="container mx-auto px-6">
-          <div className="flex items-center justify-between h-20">
-            {/* Logo with Glass Effect */}
-            <button
+      {/* Enhanced Navbar with Glassmorphism */}
+      <header className="fixed top-0 w-full bg-transparent z-50 px-8 py-4">
+        <div className="flex items-center justify-between max-w-7xl mx-auto">
+          <div className="flex items-center gap-12">
+            {/* Brand with Enhanced Animation */}
+            <button 
               onClick={() => onNavigate?.('modern-home', 'modern-home')}
-              className="group flex items-center gap-3 transition-transform hover:scale-105 bg-white/10 backdrop-blur-md px-4 py-2 rounded-2xl"
+              className="flex items-center gap-4 group hover:scale-105 transition-all duration-300 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-2xl"
             >
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur-xl opacity-70 group-hover:opacity-100 transition-opacity" />
-                <div className="relative w-12 h-12 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-2xl transition-shadow">
-                  <span className="text-white text-2xl">🧠</span>
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl blur-2xl opacity-50 group-hover:opacity-75 transition-opacity duration-500" />
+                <div className="relative w-14 h-14 bg-gradient-to-br from-orange-500 via-red-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-2xl group-hover:shadow-3xl transition-all duration-300 group-hover:rotate-12">
+                  <span className="text-3xl drop-shadow-lg">🚀</span>
                 </div>
               </div>
               <div className="flex flex-col">

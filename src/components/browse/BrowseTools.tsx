@@ -6,7 +6,6 @@ import { Input } from "../ui/input";
 import { Badge } from "../ui/badge";
 import { 
   Search, 
-  Filter, 
   Star, 
   ExternalLink, 
   Bookmark, 
@@ -18,15 +17,12 @@ import {
   Grid3x3,
   List,
   SlidersHorizontal,
-  X,
-  Plus,
-  RefreshCw
+  X
 } from "lucide-react";
 
 // Import state management components
 import { 
-  BrowseLoadingSkeleton, 
-  ToolCardSkeleton 
+  BrowseLoadingSkeleton
 } from '../ui/loading-skeleton';
 import { 
   BrowseEmptyState, 
@@ -35,7 +31,6 @@ import {
 } from '../ui/empty-state';
 import { 
   ListErrorState, 
-  NetworkErrorState, 
   ApiErrorState 
 } from '../ui/error-state';
 import { toastNotifications } from '../ui/toast-notifications';

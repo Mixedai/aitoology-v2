@@ -1,7 +1,6 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { 
-  MessageCircle, 
   X, 
   Send, 
   Minimize2, 
@@ -16,12 +15,9 @@ import {
   Copy,
   ThumbsUp,
   ThumbsDown,
-  RotateCcw,
   Loader,
   Zap,
-  Brain,
-  Eye,
-  EyeOff
+  Brain
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -60,10 +56,10 @@ export function AIChatbot({ className = '' }: AIChatbotProps) {
     }
   ]);
   const [isTyping, setIsTyping] = useState(false);
-  const [isMicEnabled, setIsMicEnabled] = useState(false);
+  // const [isMicEnabled, setIsMicEnabled] = useState(false);
   const [isSoundEnabled, setIsSoundEnabled] = useState(true);
   const [isListening, setIsListening] = useState(false);
-  const [conversationMode, setConversationMode] = useState<'chat' | 'voice'>('chat');
+  // const [conversationMode, setConversationMode] = useState<'chat' | 'voice'>('chat');
 
   // Refs for accessibility and functionality
   const chatInputRef = useRef<HTMLInputElement>(null);
@@ -211,7 +207,7 @@ export function AIChatbot({ className = '' }: AIChatbotProps) {
     console.log(`Feedback for message ${messageId}: ${isPositive ? 'positive' : 'negative'}`);
   };
 
-  const chatbotSize = isMinimized ? 'minimized' : 'expanded';
+  // const chatbotSize = isMinimized ? 'minimized' : 'expanded';
 
   return (
     <TooltipProvider>

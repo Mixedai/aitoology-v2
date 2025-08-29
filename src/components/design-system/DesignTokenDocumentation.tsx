@@ -12,11 +12,7 @@ import {
   Zap,
   Box,
   Ruler,
-  PaintBucket,
-  Monitor,
-  Smartphone,
-  Sun,
-  Moon
+  PaintBucket
 } from 'lucide-react';
 import { Card, CardHeader, CardContent } from '../ui/card';
 import { Button } from '../ui/button';

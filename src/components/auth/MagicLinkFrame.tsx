@@ -4,7 +4,7 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
-import { ArrowLeft, Check, Mail, Sparkles, Info } from 'lucide-react';
+import { ArrowLeft, Check, Sparkles, Info } from 'lucide-react';
 
 /*
 MAGIC LINK FRAME - AI TOOLOGIST DESIGN SYSTEM

@@ -5,9 +5,6 @@ import {
   GitCompare, 
   Download, 
   Share2, 
-  Filter, 
-  ChevronDown,
-  ChevronUp,
   Check,
   Minus,
   Star,
@@ -23,7 +20,6 @@ import {
   Sparkles,
   Trophy,
   TrendingUp,
-  Copy,
   ExternalLink
 } from 'lucide-react';
 import { Button } from '../ui/button';

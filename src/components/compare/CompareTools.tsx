@@ -7,23 +7,13 @@ import {
   Users,
   DollarSign,
   ExternalLink,
-  ArrowRight,
   Check,
-  Minus,
-  Zap,
   Brain,
   Cpu,
   Network,
   Boxes,
-  CircuitBoard,
   Bot,
-  Sparkles,
-  TrendingUp,
-  Award,
-  Globe,
-  Smartphone,
-  Monitor,
-  Code
+  Sparkles
 } from "lucide-react";
 import { motion, useScroll, useTransform, useInView, useSpring } from "framer-motion";
 import { Button } from "../ui/button";

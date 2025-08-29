@@ -92,7 +92,7 @@ export function OnboardingStep3Frame({
   const handleFinish = () => {
     if (onNavigate) {
       // Navigate to Browse Tools with pre-filled filters based on selected interests
-      onNavigate('onboarding-step-3', 'browse', { 
+      onNavigate('browse', { 
         preFilledCategories: selectedInterests,
         onboardingComplete: true 
       });
@@ -174,7 +174,7 @@ export function OnboardingStep3Frame({
           <h3 className="font-medium">Your interests</h3>
           <div className="p-4 bg-muted/30 rounded-lg space-y-3">
             <div className="flex flex-wrap gap-2">
-              {selectedInterests.map(interestId => {
+              {selectedInterests.map((interestId: string) => {
                 const IconComponent = interestIcons[interestId];
                 const label = interestLabels[interestId];
                 

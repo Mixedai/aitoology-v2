@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  User, 
-  Mail, 
-  Lock, 
   Eye, 
   EyeOff,
-  ArrowRight,
   ArrowLeft,
-  CheckCircle,
   Github,
   Sparkles,
   Loader

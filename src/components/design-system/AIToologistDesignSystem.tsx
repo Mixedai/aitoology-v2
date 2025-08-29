@@ -1,4 +1,4 @@
-import { useState, } from 'react';
+import React, { useState, } from 'react';
 
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -8,8 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Separator } from "../ui/separator";
 import { Alert, AlertDescription } from "../ui/alert";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
-import { Copy, Check, Palette, Type, Ruler, Layers, Zap, Info, AlertTriangle, CheckCircle2, XCircle, 
-         Eye, EyeOff, Keyboard, Monitor, Smartphone, Sun, Moon, Contrast, MousePointer, Hand, Code, ChevronDown, Square } from "lucide-react";
+import { Copy, Check, Palette, Type, Ruler, Layers, Zap, Info, AlertTriangle, CheckCircle2, 
+         Eye, Keyboard, Monitor, Smartphone, Sun, Moon, Contrast, MousePointer, Hand, Code, ChevronDown, Square } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface TokenSectionProps {

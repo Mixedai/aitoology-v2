@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
@@ -10,7 +10,6 @@ import { Checkbox } from '../ui/checkbox';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '../ui/sheet';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { ScrollArea } from '../ui/scroll-area';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
 import { toast } from 'sonner';
@@ -275,8 +274,8 @@ export function ModerationQueue() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
-  const [sortBy, setSortBy] = useState('lastUpdated');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [sortBy] = useState('lastUpdated');
+  const [sortOrder] = useState<'asc' | 'desc'>('desc');
   const [activityLog, setActivityLog] = useState<ActivityLogEntry[]>(mockActivityLog);
   const [rejectionReason, setRejectionReason] = useState('');
   const [changeRequestReason, setChangeRequestReason] = useState('');

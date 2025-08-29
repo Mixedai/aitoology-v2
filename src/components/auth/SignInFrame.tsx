@@ -2,31 +2,14 @@ import { useEffect,useRef,useState, } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion, useInView } from 'framer-motion';
 import { 
-  Mail, 
   Github, 
   Eye, 
   EyeOff, 
   ArrowLeft, 
   Loader, 
   Sparkles, 
-  Shield, 
-  Users,
-  Lock,
-  User,
-  CheckCircle2,
-  AlertTriangle,
-  Chrome,
-  Star,
-  TrendingUp,
-  Layers
+  AlertTriangle
 } from 'lucide-react';
-import { Card, CardContent, CardHeader } from '../ui/card';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
-import { Separator } from '../ui/separator';
-import { Alert, AlertDescription } from '../ui/alert';
-import { Badge } from '../ui/badge';
 
 interface SignInFrameProps {
   onNavigate?: (from: string, to: string, params?: any) => void;
